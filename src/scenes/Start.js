@@ -1,0 +1,454 @@
+import { DialogueManager } from '../managers/DialogueManager.js';
+import { EffectManager } from '../managers/EffectManager.js';
+import { SaveManager } from '../managers/SaveManager.js';
+
+export class Start extends Phaser.Scene {
+    constructor() {
+        super('Start');
+    }
+
+    preload() {
+        // assets da tela inicial
+        this.load.image('scene1_frame1', 'assets/intro/scene1_1.png');
+        this.load.image('scene1_frame2', 'assets/intro/scene1_2.png');
+        this.load.image('scene1bright', 'assets/intro/scene1bright.png');
+        this.load.image('selector', 'assets/intro/selector.png');
+        this.load.image('livroZoom', 'assets/intro/livroZoom.png');
+        
+        // interface
+        this.load.image('ui_box_narrator', 'assets/ui/ui_box_narrator.png');
+        this.load.image('ui_box_character', 'assets/ui/ui_box_character.png');
+        this.load.image('confirm_box', 'assets/ui/confirm_box.png');
+
+        // efeitos
+        this.load.spritesheet('flare', 'assets/intro/flare.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.image('textGlow', 'assets/intro/glow.png');
+      
+        // spritesheets
+        this.load.spritesheet('curtains', 'assets/intro/curtains.png', { frameWidth: 320, frameHeight: 180 });
+        this.load.spritesheet('startTexts', 'assets/intro/startTexts.png', { frameWidth: 320, frameHeight: 180 });
+        
+        // audio
+        this.load.audio('intro', 'assets/audio/intro.wav');
+        this.load.audio('burning', 'assets/audio/burning.wav');
+        
+        // vozes
+        this.load.audio('voice_a', 'assets/audio/voices/voice1/voice_a.wav');
+        this.load.audio('voice_e', 'assets/audio/voices/voice1/voice_e.wav');
+        this.load.audio('voice_i', 'assets/audio/voices/voice1/voice_i.wav');
+        this.load.audio('voice_o', 'assets/audio/voices/voice1/voice_o.wav');
+        this.load.audio('voice_u', 'assets/audio/voices/voice1/voice_u.wav');
+
+        // fontes
+        this.load.bitmapFont('pixelFont', 'assets/fonts/pixelFont/pixelFont.png', 'assets/fonts/pixelFont/pixelFont.xml');
+    }
+
+    create() {
+        const { width, height } = this.scale;
+
+        this.dialogue = new DialogueManager(this);
+
+        // musica de intro
+        this.musicIntro = this.sound.add('intro', { loop: true, volume: 0 });
+        this.musicIntro.play();
+        this.tweens.add({ targets: this.musicIntro, volume: 0.5, duration: 2000 });
+
+        this.createAnimations();
+
+        // fundos
+        this.bgBright = this.add.image(width / 2, height / 2, 'scene1bright').setAlpha(1);
+        this.bgNormal = this.add.sprite(width / 2, height / 2, 'scene1_frame1').setAlpha(0);
+        this.bgNormal.play('anim_candle'); 
+        this.curtains = this.add.sprite(width / 2, height / 2, 'curtains');
+
+        this.createMenu();
+    }
+
+    createAnimations() {
+        if (!this.anims.exists('anim_candle')) {
+            this.anims.create({ key: 'anim_candle', frames: [{ key: 'scene1_frame1' }, { key: 'scene1_frame2' }], frameRate: 3, repeat: -1 });
+        }
+        if (!this.anims.exists('anim_curtains_open')) {
+            this.anims.create({ key: 'anim_curtains_open', frames: this.anims.generateFrameNumbers('curtains', { start: 0, end: 3 }), frameRate: 4, repeat: 0 });
+        }
+        if (!this.anims.exists('anim_flare')) {
+            this.anims.create({
+                key: 'anim_flare',
+                frames: this.anims.generateFrameNumbers('flare', { start: 0, end: 1 }), 
+                frameRate: 8,
+                repeat: -1,  
+                yoyo: true  
+            });
+        }
+    }
+
+    createMenu() {
+        const { width, height } = this.scale;
+        this.uiGroup = this.add.group();
+        this.selectedButtonIndex = 0;
+        this.isMenuReady = true; 
+
+        // elementos do menu
+        const glow = this.add.image(width / 2, height / 2, 'textGlow').setOrigin(0.5).setDepth(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD).setTint(0xffffff); 
+        const selectorBaseX = (width / 2) - 60;
+        this.selectorSprite = this.add.image(selectorBaseX, 0, 'selector').setDepth(20).setVisible(false).setAlpha(0);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const title = this.add.sprite(centerX, centerY, 'startTexts', 0).setDepth(10).setAlpha(0);
+        const btnStart = this.add.sprite(centerX, centerY, 'startTexts', 1).setInteractive().setDepth(10).setAlpha(0);
+        const btnContinue = this.add.sprite(centerX, centerY, 'startTexts', 2).setInteractive().setDepth(10).setAlpha(0);
+        const btnOptions = this.add.sprite(centerX, centerY, 'startTexts', 3).setInteractive().setDepth(10).setAlpha(0);
+
+        // caixas de click
+        btnStart.input.hitArea.setTo(110, 80, 100, 20);     
+        btnContinue.input.hitArea.setTo(110, 102, 100, 20); 
+        btnOptions.input.hitArea.setTo(110, 130, 100, 20);  
+
+        this.menuButtons = [btnStart, btnContinue, btnOptions];
+        this.uiGroup.addMultiple([glow, this.selectorSprite, title, btnStart, btnContinue, btnOptions]);
+
+        // desabilita continuar se nao tiver save
+        this.continueDisabled = !SaveManager.hasSave();
+        if (this.continueDisabled) {
+            btnContinue.setTint(0x444444); 
+        }
+
+        this.setupMenuInputs();
+        this.updateSelectorPosition(); 
+
+        this.selectorTween = this.tweens.addCounter({
+            from: 0, to: 360, duration: 1500, repeat: -1,
+            onUpdate: (tween) => {
+                const angle = Phaser.Math.DegToRad(tween.getValue());
+                this.selectorSprite.x = selectorBaseX + Math.sin(angle) * 6;
+            }
+        });
+
+        this.tweens.add({ targets: [title, btnStart, btnContinue, btnOptions, this.selectorSprite], alpha: 1, duration: 2500, ease: 'Power2' });
+        this.tweens.add({ targets: glow, alpha: 0.7, duration: 3000, ease: 'Sine.easeInOut' });
+    }
+
+    setupMenuInputs() {
+        this.menuButtons.forEach((btn, index) => {
+            btn.on('pointerover', () => {
+                if (!this.isMenuReady) return;
+                if (index === 1 && this.continueDisabled) return; 
+                this.selectedButtonIndex = index;
+                this.updateSelectorPosition();
+            });
+            btn.on('pointerdown', () => { if (this.isMenuReady) this.triggerMenuAction(); });
+        });
+        this.input.keyboard.on('keydown', (event) => {
+            if (!this.isMenuReady) return;
+            switch (event.code) {
+                case 'KeyW': case 'ArrowUp': this.changeSelection(-1); break;
+                case 'KeyS': case 'ArrowDown': this.changeSelection(1); break;
+                case 'Space': case 'Enter': this.triggerMenuAction(); break;
+            }
+        });
+    }
+
+    changeSelection(direction) {
+        const len = this.menuButtons.length;
+        let next = (this.selectedButtonIndex + direction + len) % len;
+
+        // pula continuar se desabilitado
+        if (next === 1 && this.continueDisabled) {
+            next = (next + direction + len) % len;
+        }
+
+        this.selectedButtonIndex = next;
+        this.updateSelectorPosition();
+    }
+
+    updateSelectorPosition() {
+        const selectedBtn = this.menuButtons[this.selectedButtonIndex];
+        const yOffsets = [0, 24, 48]; 
+        const selectorY = selectedBtn.y + yOffsets[this.selectedButtonIndex];
+        this.selectorSprite.setVisible(true).setY(selectorY); 
+    }
+
+    triggerMenuAction() {
+        this.isMenuReady = false;
+        this.input.keyboard.removeAllListeners('keydown');
+
+        if (this.selectedButtonIndex === 0) {
+            // confirma novo jogo se tiver save
+            if (SaveManager.hasSave()) {
+                this.showConfirmNewGame();
+            } else {
+                this.runIntroSequence();
+            }
+        } else if (this.selectedButtonIndex === 1) {
+            // continuar jogo
+            const save = SaveManager.load();
+            if (save) {
+                this.startContinue(save.level);
+            } else {
+                console.log('nenhum save encontrado');
+                this.isMenuReady = true;
+                this.setupMenuInputs();
+            }
+        } else {
+            // outras opcoes
+            console.log('opcao em desenvolvimento');
+            this.isMenuReady = true;
+            this.setupMenuInputs();
+        }
+    }
+
+    startContinue(levelKey) {
+        // fade out da musica e camera
+        if (this.musicIntro) {
+            this.tweens.add({
+                targets: this.musicIntro,
+                volume: 0,
+                duration: 800,
+                onComplete: () => this.musicIntro.stop()
+            });
+        }
+
+        this.cameras.main.fadeOut(800, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start(levelKey, { fromSave: true });
+        });
+    }
+
+    showConfirmNewGame() {
+        const { width, height } = this.scale;
+        
+        if (this.selectorTween) this.selectorTween.pause(); 
+
+        // 0 = sim, 1 = nao (começa no nao)
+        this.confirmIndex = 1;
+
+        // escurece o fundo
+        this.confirmOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.75)
+            .setDepth(60).setScrollFactor(0);
+
+        this.confirmBox = this.add.image(width / 2, height / 2, 'confirm_box')
+            .setDepth(61).setScrollFactor(0);
+
+        // texto de confirmacao
+        this.confirmMsg = this.add.bitmapText(width / 2, height / 2 - 16, 'pixelFont',
+            'O save atual será apagado.\nTem certeza que deseja iniciar um novo jogo?', 16)
+            .setOrigin(0.5, 0.5).setDepth(62).setScrollFactor(0);
+
+        // opcoes sim e nao
+        this.confirmOptYes = this.add.bitmapText(width / 2 - 50, height / 2 + 18, 'pixelFont', 'Sim', 16)
+            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
+
+        this.confirmOptNo = this.add.bitmapText(width / 2 + 50, height / 2 + 18, 'pixelFont', 'Não', 16)
+            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
+
+        // cursor do seletor
+        this.confirmCursor = this.add.image(0, height / 2 + 20, 'selector')
+            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
+
+        // controle de posicao do cursor
+        this.baseCursorX = 0;
+
+        // animacao de flutuar
+        this.confirmTween = this.tweens.addCounter({
+            from: 0, to: 360, duration: 1500, repeat: -1,
+            onUpdate: (tween) => {
+                if (!this.confirmCursor || !this.confirmCursor.active) return;
+                const angle = Phaser.Math.DegToRad(tween.getValue());
+                this.confirmCursor.x = this.baseCursorX + Math.sin(angle) * 6;
+            }
+        });
+
+        this.updateConfirmCursor();
+        this.setupConfirmInputs();
+    }
+
+    updateConfirmCursor() {
+        const { width } = this.scale;
+        
+        // posiçao base do cursor
+        const xYes = width / 2 - 50;
+        const xNo = width / 2 + 50;
+        this.baseCursorX = this.confirmIndex === 0 ? xYes - 26 : xNo - 26;
+
+        // destaca a opçao selecionada
+        this.confirmOptYes.setTint(this.confirmIndex === 0 ? 0xffffff : 0x888888);
+        this.confirmOptNo.setTint(this.confirmIndex === 1 ? 0xffffff : 0x888888);
+    }
+
+    setupConfirmInputs() {
+        // navega pelo teclado
+        this.input.keyboard.on('keydown', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+                this.confirmIndex = 0;
+                this.updateConfirmCursor();
+            } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+                this.confirmIndex = 1;
+                this.updateConfirmCursor();
+            } else if (e.code === 'Enter' || e.code === 'Space') {
+                this.resolveConfirm();
+            } else if (e.code === 'Escape') {
+                this.confirmIndex = 1;
+                this.resolveConfirm();
+            }
+        });
+
+        // navega pelo mouse
+        this.confirmOptYes.setInteractive({ useHandCursor: true })
+            .on('pointerover', () => { this.confirmIndex = 0; this.updateConfirmCursor(); })
+            .on('pointerdown', () => { this.confirmIndex = 0; this.resolveConfirm(); });
+
+        this.confirmOptNo.setInteractive({ useHandCursor: true })
+            .on('pointerover', () => { this.confirmIndex = 1; this.updateConfirmCursor(); })
+            .on('pointerdown', () => { this.confirmIndex = 1; this.resolveConfirm(); });
+    }
+
+    resolveConfirm() {
+        if (this.confirmTween) this.confirmTween.remove();
+
+        this.input.keyboard.removeAllListeners('keydown');
+
+        [this.confirmOverlay, this.confirmBox, this.confirmMsg,
+         this.confirmOptYes, this.confirmOptNo, this.confirmCursor].forEach(o => o?.destroy());
+
+        if (this.confirmIndex === 0) {
+            // apaga save e inicia
+            SaveManager.deleteSave();
+            this.runIntroSequence();
+        } else {
+            // cancela e volta ao menu
+            this.isMenuReady = true;
+            this.setupMenuInputs();
+        }
+    }
+
+    // cutscene inicial
+
+    async runIntroSequence() {
+        const { width, height } = this.scale;
+
+        this.uiGroup.setVisible(false);
+        this.curtains.play('anim_curtains_open');
+        await new Promise(resolve => this.curtains.on('animationcomplete', resolve));
+        this.curtains.setVisible(false);
+
+        // cena 1
+        this.tweens.add({ targets: this.bgBright, alpha: 0, duration: 2000 });
+        this.tweens.add({ targets: this.bgNormal, alpha: 1, duration: 2000 });
+        await this.waitOrClick(5000);
+        await this.playDialogue("texto");
+        
+        // cena 2
+        const closedBook = this.add.image(width + 100, height, 'scene1_frame1').setOrigin(1, 1).setScale(2).setAlpha(0);
+        this.tweens.add({ targets: this.bgNormal, alpha: 0, duration: 1500 });
+        this.tweens.add({ targets: closedBook, alpha: 1, duration: 1500 });
+        await this.waitOrClick(2000);
+        await this.playDialogue("\"texto\" texto\ntexto.");
+
+        // cena 3
+        const imgZoom = this.add.image(width / 2, height / 2, 'livroZoom').setAlpha(0);
+        const scale = Math.max(width / imgZoom.width, height / imgZoom.height);
+        imgZoom.setScale(scale);
+        this.tweens.add({ targets: closedBook, alpha: 0, duration: 1000 });
+        this.tweens.add({ targets: imgZoom, alpha: 1, duration: 1000 });
+        await this.waitOrClick(1500);
+        await this.playDialogue("texto\ntexto");
+
+        // limpa cena anterior
+        if (closedBook) closedBook.destroy();
+        if (this.bgNormal) this.bgNormal.destroy();
+        if (this.bgBright) this.bgBright.destroy();
+        
+        // inicia transicao com fogo
+        this.startFireSequence(imgZoom);
+    }
+
+    startFireSequence(imgZoom) {
+        if (!this.scene.isActive('Level_1')) {
+            this.scene.launch('Level_1');
+            this.scene.bringToTop('Start');
+        }
+
+        const level1 = this.scene.get('Level_1');
+        level1.events.once('create', () => {
+
+            if (level1.input?.keyboard) level1.input.keyboard.enabled = false;
+            if (level1.input?.mouse) level1.input.mouse.enabled = false;
+
+            // audio do fogo
+            if (this.musicIntro) {
+                this.tweens.add({ targets: this.musicIntro, volume: 0, duration: 2000, onComplete: () => this.musicIntro.stop() });
+            }
+            this.musicBurning = this.sound.add('burning', { loop: true, volume: 0 });
+            this.musicBurning.play();
+            this.tweens.add({ targets: this.musicBurning, volume: 0.8, duration: 3000 });
+
+            // efeito visual de queima
+            if (imgZoom) imgZoom.destroy(); 
+            
+            this.EffectManager = new EffectManager(this);
+            this.EffectManager.start(() => {
+                this.startGame();
+            });
+
+        });
+    }
+
+    startGame() {
+        const level1 = this.scene.get('Level_1');
+        
+        // finaliza som do fogo
+        if (this.musicBurning) {
+            this.tweens.add({
+                targets: this.musicBurning,
+                volume: 0,
+                duration: 2500,
+                onComplete: () => this.musicBurning.stop()
+            });
+        }
+
+        this.tweens.add({
+            targets: this.cameras.main,
+            alpha: 0, 
+            duration: 2000,
+            onComplete: () => {
+                this.scene.stop('Start');
+                
+                if (level1) {
+                    if (level1.input?.keyboard) level1.input.keyboard.enabled = true;
+                    if (level1.input?.mouse) level1.input.mouse.enabled = true;
+                    if (level1.startCutscene) level1.startCutscene();
+                }
+            }
+        });
+    }
+
+    playDialogue(text) {
+        return new Promise(resolve => {
+            this.dialogue.showDialogue(text, null, null, () => {
+                this.dialogue.finishDialogue(() => resolve());
+            });
+        });
+    }
+
+    waitOrClick(duration) {
+        return new Promise((resolve) => {
+            let clicked = false;
+            const timer = this.time.delayedCall(duration, () => { if (!clicked) { clicked = true; resolve(); } });
+            const clickHandler = () => {
+                if (!clicked) {
+                    clicked = true; timer.remove();
+                    this.input.off('pointerdown', clickHandler);
+                    this.input.keyboard.off('keydown-SPACE', clickHandler);
+                    this.input.keyboard.off('keydown-ENTER', clickHandler);
+                    resolve();
+                }
+            };
+            this.input.once('pointerdown', clickHandler);
+            if (this.input.keyboard) {
+                this.input.keyboard.once('keydown-SPACE', clickHandler);
+                this.input.keyboard.once('keydown-ENTER', clickHandler);
+            }
+        });
+    }
+}
