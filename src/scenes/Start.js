@@ -44,6 +44,8 @@ export class Start extends Phaser.Scene {
     }
 
     create() {
+         // é o que aparece na tela
+    
         const { width, height } = this.scale;
 
         this.dialogue = new DialogueManager(this);
@@ -63,7 +65,6 @@ export class Start extends Phaser.Scene {
 
         this.createMenu();
     }
-
     createAnimations() {
         if (!this.anims.exists('anim_candle')) {
             this.anims.create({ key: 'anim_candle', frames: [{ key: 'scene1_frame1' }, { key: 'scene1_frame2' }], frameRate: 3, repeat: -1 });
@@ -83,6 +84,8 @@ export class Start extends Phaser.Scene {
     }
 
     createMenu() {
+     // CRIA os botões de menu (Start, Continue, Options)
+    // Mostra o título, o seletor, etc.
         const { width, height } = this.scale;
         this.uiGroup = this.add.group();
         this.selectedButtonIndex = 0;

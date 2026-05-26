@@ -8,13 +8,12 @@ export class LoginManager
      
     verifyEmail(email)
     { 
-        if(email.includes("@")){return true;}
+        if(email.includes("@")){return true;} 
         else{return false;}
     }
      
     login(email,password)
     {
-     // const $ = (elemento) => document.querySelector(elemento);
       if(verifyEmail(email) == true)
       {
         import {login} from './AuthManager.js';
