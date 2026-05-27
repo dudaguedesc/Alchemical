@@ -4,6 +4,7 @@ export class LoginManager
     {
    this.email = email;
    this.password = password;
+   
     }
      
     verifyEmail(email)
