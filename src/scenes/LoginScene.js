@@ -59,11 +59,7 @@ export class LoginScene extends Phaser.Scene {
    
      createMenu(){
       //Aqui coloque os elementos do menu, como botões, campos de texto, etc.
-       
-      this.emailDigitado = '';
-      this.senhaDigitada = '';
-      this.campoAtivo = 'email';
-
+      
       const {width, height} = this.scale;
        //Titulo do jogo
       this.add.bitmapText(width / 2, height / 2 - 50, 'pixelFont', 'Alchemical', 48).setOrigin(0.5);
@@ -75,11 +71,8 @@ export class LoginScene extends Phaser.Scene {
        emailBox.setAlpha(0.8); 
        emailBox.setInteractive();
        //escrever dentro da caixa de email
-     
-         emailBox.on('pointerdown', () => {
-          this.campoAtivo = 'email';
-       } );
-
+      this.emailText = this.add.bitmapText(width / 2 - 30, height / 2 + 3, 'pixelFont', '', 18);
+   
       //senha
        this.add.bitmapText(width / 2 - 52, height / 2 + 30, 'pixelFont', 'Senha:', 18).setOrigin(0.5);
       //campo de texto para senha
@@ -87,8 +80,78 @@ export class LoginScene extends Phaser.Scene {
        senhaBox.setDisplaySize(150,20);
        senhaBox.setAlpha(0.8); 
        senhaBox.setInteractive();
+      //parte de escrever da senha 
+      this.senhaText = this.add.bitmapText(width / 2 - 30, height / 2 + 35, 'pixelFont', '', 18);
 
-     }
-   
+      //botão de confirmar
+      const confirmButtom = this.add.image(width / 2 , height / 2 + 60, 'confirm_box');
+      confirmButtom.setDisplaySize(50, 20);
+      confirmButtom.setInteractive();
+      this.add.bitmapText(width / 2, height / 2 + 58, 'pixelFont', 'Confirmar', 18).setOrigin(0.5);
+  
+      //variáveis para armazenar o que o jogador digitou
+      this.emailDigitado = '';
+      this.senhaDigitada = '';
+      this.campoAtivo = '';
+
+      //clique no campo de email
+      emailBox.on('pointerdown', () => {
+         this.campoAtivo = 'email';
+         console.log('Email');
+      });
+
+      //Clique no campo de senha
+      senhaBox.on('pointerdown', () => {
+         this.campoAtivo = 'senha';
+         console.log('Senha');
+      });
+
+      //ativar o teclado para digitar
+      this.input.keyboard.on('keydown', (event) => {
+         if (this.campoAtivo === '') return;
+
+         if(event.code === 'Backspace') {
+            if (this.campoAtivo === 'email') {
+               this.emailDigitado = this.emailDigitado.slice(0, -1);
+               this.emailText.setText(this.emailDigitado);
+            }
+             else if (this.campoAtivo === 'senha') {
+               this.senhaDigitada = this.senhaDigitada.slice(0, -1);
+               this.senhaText.setText('*'.repeat(this.senhaDigitada.length));
+            }   
+            return;}
+
+    
+          if (event.code === 'Enter') {
+            console.log('Email:', this.emailDigitado);
+            console.log('Senha:', this.senhaDigitada);
+            return;
+         }
+         if(event.key.length === 1) {
+      
+         if (this.campoAtivo === 'email') {
+            this.emailDigitado += event.key;
+            this.emailText.setText(this.emailDigitado);
+         }
+         else if (this.campoAtivo === 'senha') {
+            this.senhaDigitada += event.key;
+            this.senhaText.setText('*'.repeat(this.senhaDigitada.length));
+         }
+       }
+      
+      });
+      //funcionamento do botão de confirmar
+         confirmButtom.on('pointerdown', () => {
+             confirmButtom.setTint(0xff0000);
+            console.log('Email:', this.emailDigitado);
+            console.log('Senha:', this.senhaDigitada);
+            
+         
+            //Aqui vai para tela start, botar o LoginMager depois
+            this.time.delayedCall(1000, () => {
+            return this.scene.start('Start');
+             });
+         });
+   }
    
 }
