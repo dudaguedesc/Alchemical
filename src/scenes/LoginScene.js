@@ -54,16 +54,41 @@ export class LoginScene extends Phaser.Scene {
       this.curtains = this.add.sprite(width / 2, height / 2, 'curtains');
 
        
-        
-      this.createMenu();
-            
+        this.createMenu();
      }
-
+   
      createMenu(){
-        
-      //this.boxEmail = this.add.image(width / 2, height / 2, 'ui_box_narrator').setInteractive()
+      //Aqui coloque os elementos do menu, como botões, campos de texto, etc.
+       
+      this.emailDigitado = '';
+      this.senhaDigitada = '';
+      this.campoAtivo = 'email';
 
-                  
-    }
+      const {width, height} = this.scale;
+       //Titulo do jogo
+      this.add.bitmapText(width / 2, height / 2 - 50, 'pixelFont', 'Alchemical', 48).setOrigin(0.5);
+      //email
+      this.add.bitmapText(width / 2 - 50, height / 2 + 10, 'pixelFont', 'Email:', 18).setOrigin(0.5);
+      //campo de texto para email
+      const emailBox = this.add.image(width / 2 + 40, height / 2 + 10, 'ui_box_narrator');
+       emailBox.setDisplaySize(150,20);
+       emailBox.setAlpha(0.8); 
+       emailBox.setInteractive();
+       //escrever dentro da caixa de email
+     
+         emailBox.on('pointerdown', () => {
+          this.campoAtivo = 'email';
+       } );
+
+      //senha
+       this.add.bitmapText(width / 2 - 52, height / 2 + 30, 'pixelFont', 'Senha:', 18).setOrigin(0.5);
+      //campo de texto para senha
+      const senhaBox = this.add.image(width / 2 + 40, height / 2 + 35, 'ui_box_narrator');
+       senhaBox.setDisplaySize(150,20);
+       senhaBox.setAlpha(0.8); 
+       senhaBox.setInteractive();
+
+     }
+   
    
 }
