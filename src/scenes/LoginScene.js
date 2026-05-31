@@ -1,6 +1,7 @@
+import { LoginManager } from '../managers/LoginManager.js';
 import { DialogueManager } from '../managers/DialogueManager.js';
 import { EffectManager } from '../managers/EffectManager.js';
-//import { LoginManager } from '../managers/LoginManager.js';
+
 
 export class LoginScene extends Phaser.Scene {
      constructor()
@@ -88,7 +89,13 @@ export class LoginScene extends Phaser.Scene {
       confirmButtom.setDisplaySize(50, 20);
       confirmButtom.setInteractive();
       this.add.bitmapText(width / 2, height / 2 + 58, 'pixelFont', 'Confirmar', 18).setOrigin(0.5);
-  
+      
+      //botão de cadastro
+      const registerButtom = this.add.image(width / 2 + 64, height / 2 + 60.5, 'confirm_box');
+      registerButtom.setDisplaySize(50, 20);      
+      registerButtom.setInteractive();
+      this.add.bitmapText(width / 2 + 64, height / 2 + 60, 'pixelFont', 'Cadastrar', 17).setOrigin(0.5);
+
       //variáveis para armazenar o que o jogador digitou
       this.emailDigitado = '';
       this.senhaDigitada = '';
@@ -143,14 +150,38 @@ export class LoginScene extends Phaser.Scene {
       //funcionamento do botão de confirmar
          confirmButtom.on('pointerdown', () => {
              confirmButtom.setTint(0xff0000);
-            console.log('Email:', this.emailDigitado);
-            console.log('Senha:', this.senhaDigitada);
-            
+            //console.log('Email:', this.emailDigitado);
+            //console.log('Senha:', this.senhaDigitada);
+
+            if(this.emailDigitado === '' || this.senhaDigitada === '') {
+               console.log('Preencha os campos de email e senha');
+               return this.scene.start('LoginScene');
+            }
+            else {
+              
+              // Aqui é onde o login acontece, usando o LoginManager
+             const loginManager = new LoginManager();
+             const resultado = loginManager.Dologin(this.emailDigitado, this.senhaDigitada);
+              
+             if(resultado.dados == null) { 
+            console.log('Falha no login:', resultado.erro);
+      
+            this.scene.restart(); // Reinicia a cena para limpar os campos e mensagens
+             }
+             else{
+               return this.scene.start('Start');
+            }
+             }
          
-            //Aqui vai para tela start, botar o LoginMager depois
-            this.time.delayedCall(1000, () => {
-            return this.scene.start('Start');
-             });
+     });
+
+         //funcionamento do botão de cadastro
+
+         registerButtom.on('pointerdown', () => {
+            registerButtom.setTint(0xff0000);
+           // return this.scene.start('RegisterScene');
+            // Aqui vai para a tela de cadastro
+           // this.scene.start('Register');
          });
    }
    
