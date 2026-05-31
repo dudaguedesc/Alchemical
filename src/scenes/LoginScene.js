@@ -179,7 +179,7 @@ export class LoginScene extends Phaser.Scene {
 
          registerButtom.on('pointerdown', () => {
             registerButtom.setTint(0xff0000);
-           // return this.scene.start('RegisterScene');
+            return this.scene.start('RegisterScene');
             // Aqui vai para a tela de cadastro
            // this.scene.start('Register');
          });

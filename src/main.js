@@ -2,6 +2,7 @@ import { Start } from './scenes/Start.js'; // Certifique-se do nome correto do a
 import { Level_1 } from './scenes/Level_1.js'; // Certifique-se do nome correto do arquivo
 import { PauseMenu } from './scenes/PauseMenu.js'; 
 import { LoginScene } from './scenes/LoginScene.js';
+import { RegisterScene } from './scenes/RegisterScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -26,6 +27,7 @@ const config = {
     },
     scene: [
         LoginScene,
+        RegisterScene,
         Start,
         Level_1,
         PauseMenu
