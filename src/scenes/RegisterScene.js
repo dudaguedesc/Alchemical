@@ -1,4 +1,4 @@
-//import {RegisterManager} from '../managers/RegisterManager.js'
+import {RegisterManager} from '../managers/RegisterManager.js'
 import { DialogueManager } from '../managers/DialogueManager.js';
 import { EffectManager } from '../managers/EffectManager.js';
 
@@ -221,8 +221,16 @@ export class RegisterScene extends Phaser.Scene{
                }           
                else{
                 // Aqui você pode adicionar a lógica para verificar se as senhas coincidem e se o email é válido, etc.
+                const registerManager = new RegisterManager();
+                const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada);
+               
+                if (resultado.dados == null) {
+                    console.log(resultado.erro);
+                    return this.scene.start('RegisterScene'); // Reinicia a cena para limpar os campos e mensagens
+                } else {
                     return this.scene.start('LoginScene');
                }
+            }
          });
            
             //funcionamento do botão de voltar para login

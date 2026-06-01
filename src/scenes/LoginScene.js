@@ -150,9 +150,7 @@ export class LoginScene extends Phaser.Scene {
       //funcionamento do botão de confirmar
          confirmButtom.on('pointerdown', () => {
              confirmButtom.setTint(0xff0000);
-            console.log('Email:', this.emailDigitado);
-            console.log('Senha:', this.senhaDigitada);
-
+           
             if(this.emailDigitado === '' || this.senhaDigitada === '') {
                console.log('Preencha os campos de email e senha');
                return this.scene.start('LoginScene');
@@ -166,7 +164,7 @@ export class LoginScene extends Phaser.Scene {
              if(resultado.dados == null) { 
             console.log('Falha no login:', resultado.erro);
       
-            this.scene.restart(); // Reinicia a cena para limpar os campos e mensagens
+            this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
              }
              else{
                return this.scene.start('Start');

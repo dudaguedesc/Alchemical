@@ -1,30 +1,33 @@
-import { register } from './AuthManager.js';
+//import { register } from './AuthManager.js';
 
 export class RegisterManager
 {
  DoRegister(nomeJogador, email, password, confirmPassword)
  {
   
-  
-   const AllCorrect = email !=null && password != null && confirm_password !=null && nomeJogador !=null;
-    //verifica se não tem nada nulo.
-   VerifyInformation()
-   {
-    if(!(password == confirm_password) || !(email.includes("@")) || AllCorrect != true)
-    {
-        console.log("Dados Incorretos.")
-        return false;
-    }
-    else{
-        import {register} from './AuthManager.js';
-         const reg = new register;
-         reg.register(email, password, nomeJogador);
-         console.log("Conta Cadastrada");
-    }
-   }
+  if(this.verifyUser(nomeJogador) == false){
+    return {dados: null, erro: "Nome de jogador inválido"};
+  }
 
+  if(this.verifyEmail(email) == false){
+     return {dados: null, erro: "Email inválido"};
+  }
+
+  if(this.verifyPassword(password)== false){
+     return {dados: null, erro: "Senha inválida"};
+  }
+  if(this.verifyConfirmPassword(password, confirmPassword) == false){
+    return {dados: null, erro: "As senhas não coincidem"};
+  }
+   
+  //const resultado = register(nomeJogador, email, password);
+  const resultado = {dados: {nomeJogador, email, password}, erro: null}; // Simulação de resultado bem-sucedido
+
+  //
+  return resultado;
+   
  }
-  veryfyUser(nomeJogador){
+  verifyUser(nomeJogador){
    if(nomeJogador.length >= 3){return true;} 
    else{console.log("Nome de jogador inválido."); return false;}
    } 
