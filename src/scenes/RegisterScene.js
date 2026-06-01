@@ -147,13 +147,26 @@ export class RegisterScene extends Phaser.Scene{
                console.log('Senha');
             });
             //Clique no campo de confirmar senha
-            confirmSenhaBox.on('pointerdown', () => {
-               this.campoAtivo = 'confirmSenha';
-               console.log('Confirmar Senha');
+              confirmSenhaBox.on('pointerdown', () => {
+                this.campoAtivo = 'confirmSenha';
+                console.log('Confirmar Senha');
+            });
+             //mostrar senha
+   const mostrarSenhaBtn = this.add.image(width / 2 + 140, height / 2 + 33, 'ui_box_narrator'); 
+            mostrarSenhaBtn.setDisplaySize(30, 20);
+            mostrarSenhaBtn.setInteractive();
+            const mostrarSenhaBtnLabel = this.add.bitmapText(width / 2 + 140, height / 2 + 33, 'pixelFont', 'Ver', 12).setOrigin(0.5);
+         
+            mostrarSenhaBtn.on('pointerdown', () => {
+                this.mostrarSenha = !this.mostrarSenha;
+                mostrarSenhaBtnLabel.setText(this.mostrarSenha ? 'Ocultar' : 'Ver');
+                this.atualizarExibicaoSenhas();
             });
 
             
       //ativar o teclado para digitar
+           this.input.keyboard.on('keydown', (event) => {
+         if (this.campoAtivo === '') return;
       if (event.code === 'Backspace') {
                 if (this.campoAtivo === 'usuario') {
                     this.userDigitado = this.userDigitado.slice(0, -1);
