@@ -129,29 +129,47 @@ export class RegisterScene extends Phaser.Scene {
         this.confirmSenhaDigitada = '';
         this.campoAtivo = '';
         this.mostrarSenha = false;
+        this.cursorVisible = true;
+
+        this.time.addEvent({
+            delay: 500,
+            loop: true,
+            callback: () => {
+                this.cursorVisible = !this.cursorVisible;
+                this.atualizarExibicaoSenhas();
+            }
+        });
         
         //clique no campo de usuario
         UserBox.on('pointerdown', () => {
             this.campoAtivo = 'usuario';
             console.log('Usuario');
+            this.cursorVisible = true;
+            this.atualizarExibicaoSenhas();
         });
         
         //clique no campo de email
         emailBox.on('pointerdown', () => {
             this.campoAtivo = 'email';
             console.log('Email');
+            this.cursorVisible = true;
+            this.atualizarExibicaoSenhas();
         });
 
         //Clique no campo de senha
         senhaBox.on('pointerdown', () => {
             this.campoAtivo = 'senha';
             console.log('Senha');
+            this.cursorVisible = true;
+            this.atualizarExibicaoSenhas();
         });
         
         //Clique no campo de confirmar senha
         confirmSenhaBox.on('pointerdown', () => {
             this.campoAtivo = 'confirmSenha';
             console.log('Confirmar Senha');
+            this.cursorVisible = true;
+            this.atualizarExibicaoSenhas();
         });
         
         //mostrar senha
@@ -181,20 +199,18 @@ export class RegisterScene extends Phaser.Scene {
             if (event.code === 'Backspace') {
                 if (this.campoAtivo === 'usuario') {
                     this.userDigitado = this.userDigitado.slice(0, -1);
-                    this.userText.setText(this.userDigitado);
                 }
                 else if (this.campoAtivo === 'email') {
                     this.emailDigitado = this.emailDigitado.slice(0, -1);
-                    this.emailText.setText(this.emailDigitado);
                 }
                 else if (this.campoAtivo === 'senha') {
                     this.senhaDigitada = this.senhaDigitada.slice(0, -1);
-                    this.atualizarExibicaoSenhas(); 
                 }   
                 else if (this.campoAtivo === 'confirmSenha') {
                     this.confirmSenhaDigitada = this.confirmSenhaDigitada.slice(0, -1);
-                    this.atualizarExibicaoSenhas(); 
                 }
+                this.cursorVisible = true;
+                this.atualizarExibicaoSenhas();
                 return;
             }
         
@@ -206,20 +222,18 @@ export class RegisterScene extends Phaser.Scene {
             if(event.key.length === 1) {
                 if (this.campoAtivo === 'usuario') {
                     this.userDigitado += event.key;
-                    this.userText.setText(this.userDigitado);
                 }
                 else if (this.campoAtivo === 'email') {
                     this.emailDigitado += event.key;
-                    this.emailText.setText(this.emailDigitado);
                 }
                 else if (this.campoAtivo === 'senha') {
                     this.senhaDigitada += event.key;
-                    this.atualizarExibicaoSenhas();
                 }
                 else if (this.campoAtivo === 'confirmSenha') {
                     this.confirmSenhaDigitada += event.key;
-                    this.atualizarExibicaoSenhas();
                 }
+                this.cursorVisible = true;
+                this.atualizarExibicaoSenhas();
             }
         });
 
@@ -251,15 +265,22 @@ export class RegisterScene extends Phaser.Scene {
         });
     }
 
+    // atualiza a exibição do email e senha, mostrando o cursor piscando
     atualizarExibicaoSenhas() {
         if (!this.senhaDigitada) this.senhaDigitada = '';
         if (!this.confirmSenhaDigitada) this.confirmSenhaDigitada = '';
+
+        const cursor = this.cursorVisible ? 'I' : '';
+
+        this.userText.setText(this.userDigitado + (this.campoAtivo === 'usuario' ? cursor : ''));
+        this.emailText.setText(this.emailDigitado + (this.campoAtivo === 'email' ? cursor : ''));
+
         if (this.mostrarSenha) {
-            this.senhaText.setText(this.senhaDigitada);
-            this.confirmSenhaText.setText(this.confirmSenhaDigitada);
+            this.senhaText.setText(this.senhaDigitada + (this.campoAtivo === 'senha' ? cursor : ''));
+            this.confirmSenhaText.setText(this.confirmSenhaDigitada + (this.campoAtivo === 'confirmSenha' ? cursor : ''));
         } else {
-            this.senhaText.setText('*'.repeat(this.senhaDigitada.length));
-            this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length));
+            this.senhaText.setText('*'.repeat(this.senhaDigitada.length) + (this.campoAtivo === 'senha' ? cursor : ''));
+            this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length) + (this.campoAtivo === 'confirmSenha' ? cursor : ''));
         }
     }
     
@@ -278,8 +299,6 @@ export class RegisterScene extends Phaser.Scene {
             this.emailDigitado = '';
             this.senhaDigitada = '';
             this.confirmSenhaDigitada = '';
-            this.userText.setText('');
-            this.emailText.setText('');
             this.atualizarExibicaoSenhas();
         });
     }
