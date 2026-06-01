@@ -152,8 +152,9 @@ export class LoginScene extends Phaser.Scene {
              confirmButtom.setTint(0xff0000);
            
             if(this.emailDigitado === '' || this.senhaDigitada === '') {
-               console.log('Preencha os campos de email e senha');
-               return this.scene.start('LoginScene');
+               this.ErroScreen('Preencha todos os campos!');
+               //return this.scene.start('LoginScene');
+               return;
             }
             else {
               
@@ -162,12 +163,15 @@ export class LoginScene extends Phaser.Scene {
              const resultado = loginManager.Dologin(this.emailDigitado, this.senhaDigitada);
               
              if(resultado.dados == null) { 
-            console.log('Falha no login:', resultado.erro);
-      
-            this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
+            this.ErroScreen(resultado.erro);
+          //  return this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
+          return;
              }
-             else{
+             else if(resultado.dados.email == this.emailDigitado && resultado.dados.password == this.senhaDigitada) {
                return this.scene.start('Start');
+            }
+            else{
+               this.ErroScreen('Email ou senha incorretos ou não cadastrados!');
             }
              }
          
@@ -183,4 +187,20 @@ export class LoginScene extends Phaser.Scene {
          });
    }
    
+   ErroScreen(mensagem) {
+      const {width, height} = this.scale;
+      // Exibe a mensagem de erro na tela
+      const errorText = this.add.text(width / 2, height / 2 - 18, mensagem, {
+      fontsize: '16px',
+      fill: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 10, y: 5 },  
+      fontFamily: 'pixelFont'
+      }).setOrigin(0.5).setDepth(100);
+   
+   this.time.delayedCall(1000, () => { errorText.destroy();
+      this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
+});
 }
+}
+

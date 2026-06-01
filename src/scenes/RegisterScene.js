@@ -210,14 +210,10 @@ export class RegisterScene extends Phaser.Scene{
             //funcionamento do botão de confirmar
             confirmButtom.on('pointerdown', () => {
              confirmButtom.setTint(0xff0000);
-            console.log('Usuario:', this.userDigitado);
-            console.log('Email:', this.emailDigitado);
-            console.log('Senha:', this.senhaDigitada);
-            console.log('Confirmar Senha:', this.confirmSenhaDigitada);
-
+           
                if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '') {
-                  console.log('Preencha todos os campos');
-                  return this.scene.start('RegisterScene');
+               this.ErroScreen('Preencha todos os campos!');
+               return; 
                }           
                else{
                 // Aqui você pode adicionar a lógica para verificar se as senhas coincidem e se o email é válido, etc.
@@ -225,8 +221,8 @@ export class RegisterScene extends Phaser.Scene{
                 const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada);
                
                 if (resultado.dados == null) {
-                    console.log(resultado.erro);
-                    return this.scene.start('RegisterScene'); // Reinicia a cena para limpar os campos e mensagens
+                    this.ErroScreen(resultado.erro);
+                    return; 
                 } else {
                     return this.scene.start('LoginScene');
                }
@@ -240,6 +236,22 @@ export class RegisterScene extends Phaser.Scene{
             });
 
         }
-
+      //função para exibir mensagens de erro
+        ErroScreen(mensagem) {
+         const {width, height} = this.scale;
+         // Exibe a mensagem de erro na tela
+         const errorText = this.add.text(width / 2, height / 2 - 50, mensagem, {
+         fontsize: '16px',
+         fill: '#ffffff',
+         backgroundColor: '#000000',
+         padding: { x: 10, y: 5 },  
+         fontFamily: 'pixelFont'
+         }).setOrigin(0.5).setDepth(100);
+   
+      this.time.delayedCall(1000, () => { errorText.destroy();
+      this.scene.start('RegisterScene'); // Reinicia a cena para limpar os campos e mensagens 
+    });
+   }
+  
 
 }
