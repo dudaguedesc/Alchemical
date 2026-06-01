@@ -49,52 +49,58 @@ export class LoginScene extends Phaser.Scene {
         
       
       // fundos
-      this.bgBright = this.add.image(width / 2, height / 2, 'scene1bright').setAlpha(1);
-      this.bgNormal = this.add.sprite(width / 2, height / 2, 'scene1_frame1').setAlpha(0);
+      this.bgBright = this.add.image(Math.round(width / 2), Math.round(height / 2), 'scene1bright').setAlpha(1);
+      this.bgNormal = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'scene1_frame1').setAlpha(0);
       this.bgNormal.play('anim_candle'); 
-      this.curtains = this.add.sprite(width / 2, height / 2, 'curtains');
+      this.curtains = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'curtains');
 
        
         this.createMenu();
      }
    
+     addCenteredBitmapText(x, y, textStr, size = 16) {
+        const bmpText = this.add.bitmapText(0, 0, 'pixelFont', textStr, size);
+        bmpText.setPosition(Math.round(x - bmpText.width / 2), Math.round(y - bmpText.height / 2));
+        return bmpText;
+     }
+
      createMenu(){
       //Aqui coloque os elementos do menu, como botões, campos de texto, etc.
       
       const {width, height} = this.scale;
        //Titulo do jogo
-      this.add.bitmapText(width / 2, height / 2 - 50, 'pixelFont', 'Alchemical', 48).setOrigin(0.5);
+      this.addCenteredBitmapText(width / 2, height / 2 - 50, 'Alchemical', 16);
       //email
-      this.add.bitmapText(width / 2 - 50, height / 2 + 10, 'pixelFont', 'Email:', 18).setOrigin(0.5);
+      this.addCenteredBitmapText(width / 2 - 50, height / 2 + 10, 'Email:', 16);
       //campo de texto para email
-      const emailBox = this.add.image(width / 2 + 40, height / 2 + 10, 'ui_box_narrator');
+      const emailBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 + 10), 'ui_box_narrator');
        emailBox.setDisplaySize(150,20);
        emailBox.setAlpha(0.8); 
        emailBox.setInteractive();
        //escrever dentro da caixa de email
-      this.emailText = this.add.bitmapText(width / 2 - 30, height / 2 + 3, 'pixelFont', '', 18);
+      this.emailText = this.add.bitmapText(Math.round(width / 2 - 30), Math.round(height / 2 + 3), 'pixelFont', '', 16);
    
       //senha
-       this.add.bitmapText(width / 2 - 52, height / 2 + 30, 'pixelFont', 'Senha:', 18).setOrigin(0.5);
+       this.addCenteredBitmapText(width / 2 - 52, height / 2 + 30, 'Senha:', 16);
       //campo de texto para senha
-      const senhaBox = this.add.image(width / 2 + 40, height / 2 + 35, 'ui_box_narrator');
+      const senhaBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 + 35), 'ui_box_narrator');
        senhaBox.setDisplaySize(150,20);
        senhaBox.setAlpha(0.8); 
        senhaBox.setInteractive();
       //parte de escrever da senha 
-      this.senhaText = this.add.bitmapText(width / 2 - 30, height / 2 + 35, 'pixelFont', '', 18);
+      this.senhaText = this.add.bitmapText(Math.round(width / 2 - 30), Math.round(height / 2 + 35), 'pixelFont', '', 16);
 
       //botão de confirmar
-      const confirmButtom = this.add.image(width / 2 , height / 2 + 60, 'confirm_box');
+      const confirmButtom = this.add.image(Math.round(width / 2), Math.round(height / 2 + 60), 'confirm_box');
       confirmButtom.setDisplaySize(50, 20);
       confirmButtom.setInteractive();
-      this.add.bitmapText(width / 2, height / 2 + 58, 'pixelFont', 'Confirmar', 18).setOrigin(0.5);
+      this.addCenteredBitmapText(width / 2, height / 2 + 58, 'Confirmar', 16);
       
       //botão de cadastro
-      const registerButtom = this.add.image(width / 2 + 64, height / 2 + 60.5, 'confirm_box');
+      const registerButtom = this.add.image(Math.round(width / 2 + 64), Math.round(height / 2 + 60.5), 'confirm_box');
       registerButtom.setDisplaySize(50, 20);      
       registerButtom.setInteractive();
-      this.add.bitmapText(width / 2 + 64, height / 2 + 60, 'pixelFont', 'Cadastrar', 17).setOrigin(0.5);
+      this.addCenteredBitmapText(width / 2 + 64, height / 2 + 60, 'Cadastrar', 16);
 
       //variáveis para armazenar o que o jogador digitou
       this.emailDigitado = '';
@@ -190,17 +196,12 @@ export class LoginScene extends Phaser.Scene {
    ErroScreen(mensagem) {
       const {width, height} = this.scale;
       // Exibe a mensagem de erro na tela
-      const errorText = this.add.text(width / 2, height / 2 - 18, mensagem, {
-      fontsize: '16px',
-      fill: '#ffffff',
-      backgroundColor: '#000000',
-      padding: { x: 10, y: 5 },  
-      fontFamily: 'pixelFont'
-      }).setOrigin(0.5).setDepth(100);
+      const errorText = this.addCenteredBitmapText(width / 2, height / 2 - 18, mensagem, 16);
+      errorText.setDepth(100);
+      errorText.setTint(0xff0000);
    
    this.time.delayedCall(1000, () => { errorText.destroy();
       this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
 });
 }
 }
-

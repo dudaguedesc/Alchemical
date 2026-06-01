@@ -91,12 +91,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    // ----------------------------------------------------------
-    // collectStone()
-    //   Chamado pela cena quando o player aperta E perto de uma pedra.
-    //   Incrementa o contador de pedras se ainda houver espaço.
-    //   Retorna true se conseguiu coletar, false se já está cheio.
-    // ----------------------------------------------------------
     collectStone() {
         if (this.stonesCarried >= this.maxStones) return false; // inventário cheio
 
@@ -104,12 +98,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         return true; // coletou com sucesso
     }
 
-    // ----------------------------------------------------------
-    // canThrowStone()
-    //   Verifica se o player tem pedras para arremessar.
-    //   Chamado antes de criar o projétil na cena.
-    //   Retorna true e decrementa o contador se puder arremessar.
-    // ----------------------------------------------------------
     canThrowStone() {
         if (this.stonesCarried <= 0) return false; // sem pedras
 
