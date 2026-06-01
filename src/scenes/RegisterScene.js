@@ -129,7 +129,7 @@ export class RegisterScene extends Phaser.Scene{
             this.senhaDigitada = '';
             this.confirmSenhaDigitada = '';
             this.campoAtivo = '';
-
+            this.mostrarSenha = false;
             //clique no campo de usuario
             UserBox.on('pointerdown', () => {
                this.campoAtivo = 'usuario';
@@ -154,56 +154,50 @@ export class RegisterScene extends Phaser.Scene{
 
             
       //ativar o teclado para digitar
-      this.input.keyboard.on('keydown', (event) => {
-         if (this.campoAtivo === '') return;
-
-         if(event.code === 'Backspace') {
-            if (this.campoAtivo === 'usuario') {
-               this.userDigitado = this.userDigitado.slice(0, -1);
-               this.userText.setText(this.userDigitado);
+      if (event.code === 'Backspace') {
+                if (this.campoAtivo === 'usuario') {
+                    this.userDigitado = this.userDigitado.slice(0, -1);
+                    this.userText.setText(this.userDigitado);
+                }
+                else if (this.campoAtivo === 'email') {
+                    this.emailDigitado = this.emailDigitado.slice(0, -1);
+                    this.emailText.setText(this.emailDigitado);
+                }
+                else if (this.campoAtivo === 'senha') {
+                    this.senhaDigitada = this.senhaDigitada.slice(0, -1);
+                    this.atualizarExibicaoSenhas(); 
+                }   
+                else if (this.campoAtivo === 'confirmSenha') {
+                    this.confirmSenhaDigitada = this.confirmSenhaDigitada.slice(0, -1);
+                    this.atualizarExibicaoSenhas(); 
+                }
+                return;
             }
-            else if (this.campoAtivo === 'email') {
-               this.emailDigitado = this.emailDigitado.slice(0, -1);
-               this.emailText.setText(this.emailDigitado);
-            }
-             else if (this.campoAtivo === 'senha') {
-               this.senhaDigitada = this.senhaDigitada.slice(0, -1);
-               this.senhaText.setText(this.senhaDigitada);
-            }   
-            else if (this.campoAtivo === 'confirmSenha') {
-               this.confirmSenhaDigitada = this.confirmSenhaDigitada.slice(0, -1);
-               this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length));
-            }
-
-            return;}
         
+            if (event.code === 'Enter') {
+                console.log('Usuario:', this.userDigitado);
     
-          if (event.code === 'Enter') {
-            console.log('Usuario:', this.userDigitado);
-            console.log('Email:', this.emailDigitado);
-            console.log('Senha:', this.senhaDigitada);
-            console.log('Confirmar Senha:', this.confirmSenhaDigitada);
-            return;
-         }
-         if(event.key.length === 1) {
-      
-            if (this.campoAtivo === 'usuario') {
-               this.userDigitado += event.key;
-               this.userText.setText(this.userDigitado);
+                return;
             }
-          else if (this.campoAtivo === 'email') {
-            this.emailDigitado += event.key;
-            this.emailText.setText(this.emailDigitado);
-         }
-         else if (this.campoAtivo === 'senha') {
-            this.senhaDigitada += event.key;
-            this.senhaText.setText(this.senhaDigitada);
-         }
-         else if (this.campoAtivo === 'confirmSenha') {
-            this.confirmSenhaDigitada += event.key;
-            this.confirmSenhaText.setText(this.confirmSenhaDigitada);
-         }
-       }
+
+            if(event.key.length === 1) {
+                if (this.campoAtivo === 'usuario') {
+                    this.userDigitado += event.key;
+                    this.userText.setText(this.userDigitado);
+                }
+                else if (this.campoAtivo === 'email') {
+                    this.emailDigitado += event.key;
+                    this.emailText.setText(this.emailDigitado);
+                }
+                else if (this.campoAtivo === 'senha') {
+                    this.senhaDigitada += event.key;
+                    this.atualizarExibicaoSenhas();
+                }
+                else if (this.campoAtivo === 'confirmSenha') {
+                    this.confirmSenhaDigitada += event.key;
+                    this.atualizarExibicaoSenhas();
+                }
+            }
 
             });
 
@@ -236,6 +230,17 @@ export class RegisterScene extends Phaser.Scene{
             });
 
         }
+atualizarExibicaoSenhas() {
+        if (!this.senhaDigitada) this.senhaDigitada = '';
+        if (!this.confirmSenhaDigitada) this.confirmSenhaDigitada = '';
+        if (this.mostrarSenha) {
+            this.senhaText.setText(this.senhaDigitada);
+            this.confirmSenhaText.setText(this.confirmSenhaDigitada);
+        } else {
+            this.senhaText.setText('*'.repeat(this.senhaDigitada.length));
+            this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length));
+        }
+    }
       //função para exibir mensagens de erro
         ErroScreen(mensagem) {
          const {width, height} = this.scale;
