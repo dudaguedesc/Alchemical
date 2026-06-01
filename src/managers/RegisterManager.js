@@ -1,12 +1,11 @@
+import { register } from './AuthManager.js';
+
 export class RegisterManager
 {
- InformData()
+ DoRegister(nomeJogador, email, password, confirmPassword)
  {
-   const email = $("#email").value;
-   const password = $("#password").value;
-   const nomeJogador = $("#nomeJogador").value;
-   const confirm_password = $("#confirm_password").value;
-     
+  
+  
    const AllCorrect = email !=null && password != null && confirm_password !=null && nomeJogador !=null;
     //verifica se não tem nada nulo.
    VerifyInformation()
@@ -25,5 +24,25 @@ export class RegisterManager
    }
 
  }
+  veryfyUser(nomeJogador){
+   if(nomeJogador.length >= 3){return true;} 
+   else{console.log("Nome de jogador inválido."); return false;}
+   } 
 
+ verifyEmail(email)
+    { 
+        if(email.includes("@")){return true;} 
+        else{console.log("Email Inválido."); return false;}
+    }
+   
+    verifyPassword(password)
+    {
+        if(password.length >= 3){return true;}
+        else{console.log("Senha Inválida."); return false;}
+    }
+    verifyConfirmPassword(password, confirmPassword)
+    {
+        if(password === confirmPassword){return true;}
+        else{console.log("As senhas não coincidem."); return false;}
+    }
 }

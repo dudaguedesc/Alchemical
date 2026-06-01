@@ -150,8 +150,8 @@ export class LoginScene extends Phaser.Scene {
       //funcionamento do botão de confirmar
          confirmButtom.on('pointerdown', () => {
              confirmButtom.setTint(0xff0000);
-            //console.log('Email:', this.emailDigitado);
-            //console.log('Senha:', this.senhaDigitada);
+            console.log('Email:', this.emailDigitado);
+            console.log('Senha:', this.senhaDigitada);
 
             if(this.emailDigitado === '' || this.senhaDigitada === '') {
                console.log('Preencha os campos de email e senha');

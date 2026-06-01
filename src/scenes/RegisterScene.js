@@ -74,7 +74,7 @@ export class RegisterScene extends Phaser.Scene{
             UserBox.setInteractive();
 
             //escrever dentro da caixa de usuario
-           this.userText = this.add.bitmapText(width / 2 - 60 + 100, height / 2 - 25, 'pixelFont', '', 18);
+           this.userText = this.add.bitmapText(width / 2 - 60 + 23, height / 2 - 32, 'pixelFont', '', 18);
 
             //Email
             this.add.bitmapText(width / 2 - 60, height / 2 - 5, 'pixelFont', 'Email:', 18).setOrigin(0.5);
@@ -84,7 +84,7 @@ export class RegisterScene extends Phaser.Scene{
             emailBox.setAlpha(0.8); 
             emailBox.setInteractive();
             //escrever dentro da caixa de email
-            this.emailText = this.add.bitmapText(width / 2 - 60 + 100, height / 2 - 3, 'pixelFont', '', 18);
+            this.emailText = this.add.bitmapText(width / 2 - 60 + 23, height / 2 - 8, 'pixelFont', '', 18);
 
             //Senha
             this.add.bitmapText(width / 2 - 60, height / 2 + 20, 'pixelFont', 'Senha:', 18).setOrigin(0.5);
@@ -96,7 +96,7 @@ export class RegisterScene extends Phaser.Scene{
             senhaBox.setInteractive();
 
             //escrever dentro da caixa de senha
-            this.senhaText = this.add.bitmapText(width / 2 - 60 + 100, height / 2 + 25, 'pixelFont', '', 18);
+            this.senhaText = this.add.bitmapText(width / 2 - 60 + 23, height / 2 + 13, 'pixelFont', '', 18);
 
             //confirmar senha
             this.add.bitmapText(width / 2 - 83, height / 2 + 40, 'pixelFont', 'Confirmar Senha:', 18).setOrigin(0.5);
@@ -108,7 +108,7 @@ export class RegisterScene extends Phaser.Scene{
             confirmSenhaBox.setInteractive();
 
             //escrever dentro da caixa de confirmar senha
-            this.confirmSenhaText = this.add.bitmapText(width / 2 - 60 + 100, height / 2 + 44, 'pixelFont', '', 18);
+            this.confirmSenhaText = this.add.bitmapText(width / 2 - 60 + 23, height / 2 + 38, 'pixelFont', '', 18);
 
             //botão de confirmar
 
@@ -117,13 +117,121 @@ export class RegisterScene extends Phaser.Scene{
             confirmButtom.setInteractive();
             this.add.bitmapText(width / 2 - 60 + 47, height / 2 + 67, 'pixelFont', 'Confirmar', 18).setOrigin(0.5);
 
+            //botão de voltar para login
+            const backButtom = this.add.image(width / 2 - 60 + 100, height / 2 + 68, 'confirm_box');
+            backButtom.setDisplaySize(50, 20);      
+            backButtom.setInteractive();
+            this.add.bitmapText(width / 2 - 60 + 102, height / 2 + 67, 'pixelFont', 'Voltar', 17).setOrigin(0.5);
+
             // variáveis para armazenar o que o jogador digitou
             this.userDigitado = '';
             this.emailDigitado = '';
             this.senhaDigitada = '';
             this.confirmSenhaDigitada = '';
             this.campoAtivo = '';
+
+            //clique no campo de usuario
+            UserBox.on('pointerdown', () => {
+               this.campoAtivo = 'usuario';
+               console.log('Usuario');
+            });
+            //clique no campo de email
+            emailBox.on('pointerdown', () => {
+               this.campoAtivo = 'email';
+               console.log('Email');
+            });
+
+            //Clique no campo de senha
+            senhaBox.on('pointerdown', () => {
+               this.campoAtivo = 'senha';
+               console.log('Senha');
+            });
+            //Clique no campo de confirmar senha
+            confirmSenhaBox.on('pointerdown', () => {
+               this.campoAtivo = 'confirmSenha';
+               console.log('Confirmar Senha');
+            });
+
+            
+      //ativar o teclado para digitar
+      this.input.keyboard.on('keydown', (event) => {
+         if (this.campoAtivo === '') return;
+
+         if(event.code === 'Backspace') {
+            if (this.campoAtivo === 'usuario') {
+               this.userDigitado = this.userDigitado.slice(0, -1);
+               this.userText.setText(this.userDigitado);
+            }
+            else if (this.campoAtivo === 'email') {
+               this.emailDigitado = this.emailDigitado.slice(0, -1);
+               this.emailText.setText(this.emailDigitado);
+            }
+             else if (this.campoAtivo === 'senha') {
+               this.senhaDigitada = this.senhaDigitada.slice(0, -1);
+               this.senhaText.setText(this.senhaDigitada);
+            }   
+            else if (this.campoAtivo === 'confirmSenha') {
+               this.confirmSenhaDigitada = this.confirmSenhaDigitada.slice(0, -1);
+               this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length));
+            }
+
+            return;}
+        
+    
+          if (event.code === 'Enter') {
+            console.log('Usuario:', this.userDigitado);
+            console.log('Email:', this.emailDigitado);
+            console.log('Senha:', this.senhaDigitada);
+            console.log('Confirmar Senha:', this.confirmSenhaDigitada);
+            return;
          }
+         if(event.key.length === 1) {
+      
+            if (this.campoAtivo === 'usuario') {
+               this.userDigitado += event.key;
+               this.userText.setText(this.userDigitado);
+            }
+          else if (this.campoAtivo === 'email') {
+            this.emailDigitado += event.key;
+            this.emailText.setText(this.emailDigitado);
+         }
+         else if (this.campoAtivo === 'senha') {
+            this.senhaDigitada += event.key;
+            this.senhaText.setText(this.senhaDigitada);
+         }
+         else if (this.campoAtivo === 'confirmSenha') {
+            this.confirmSenhaDigitada += event.key;
+            this.confirmSenhaText.setText(this.confirmSenhaDigitada);
+         }
+       }
+
+            });
+
+            //funcionamento do botão de confirmar
+            confirmButtom.on('pointerdown', () => {
+             confirmButtom.setTint(0xff0000);
+            console.log('Usuario:', this.userDigitado);
+            console.log('Email:', this.emailDigitado);
+            console.log('Senha:', this.senhaDigitada);
+            console.log('Confirmar Senha:', this.confirmSenhaDigitada);
+
+               if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '') {
+                  console.log('Preencha todos os campos');
+                  return this.scene.start('RegisterScene');
+               }           
+               else{
+                // Aqui você pode adicionar a lógica para verificar se as senhas coincidem e se o email é válido, etc.
+                    return this.scene.start('LoginScene');
+               }
+         });
+           
+            //funcionamento do botão de voltar para login
+            backButtom.on('pointerdown', () => {
+               backButtom.setTint(0xff0000);
+               return this.scene.start('LoginScene');
+            });
+
+        }
 
 
 }
