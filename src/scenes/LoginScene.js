@@ -187,32 +187,27 @@ export class LoginScene extends Phaser.Scene {
       
       });
       //funcionamento do botão de confirmar
-         confirmButtom.on('pointerdown', () => {
+         confirmButtom.on('pointerdown', async () => {
              confirmButtom.setTint(0xff0000);
            
             if(this.emailDigitado === '' || this.senhaDigitada === '') {
                this.ErroScreen('Preencha todos os campos!');
-               //return this.scene.start('LoginScene');
                return;
             }
             else {
               
-              // Aqui é onde o login acontece, usando o LoginManager
              const loginManager = new LoginManager();
-             const resultado = loginManager.Dologin(this.emailDigitado, this.senhaDigitada);
+             const resultado = await loginManager.Dologin(this.emailDigitado, this.senhaDigitada);
               
+             // senha ou email errados
              if(resultado.dados == null) { 
-            this.ErroScreen(resultado.erro);
-          //  return this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
-          return;
+                 this.ErroScreen(resultado.erro);
+                 return;
              }
-             else if(resultado.dados.email == this.emailDigitado && resultado.dados.password == this.senhaDigitada) {
-               return this.scene.start('Start');
-            }
-            else{
-               this.ErroScreen('Email ou senha incorretos ou não cadastrados!');
-            }
+             else {
+                 return this.scene.start('Start');
              }
+            }
          
      });
 
