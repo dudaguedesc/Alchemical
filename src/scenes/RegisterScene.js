@@ -71,14 +71,18 @@ export class RegisterScene extends Phaser.Scene {
         
         //Caixa de escolha : Acompanhante ou  Jogador
         //Opção Acompanhante
-        const OpcaoAcompanhante = this.add.image(Math.round(width / 2 - 10 ), Math.round(height / 2 - 45 ), 'CircleEmpty').setInteractive();
-        OpcaoAcompanhante.setDisplaySize(50, 50);
+        const buttomAcompanhante = this.add.image(Math.round(width / 2 - 10 ), Math.round(height / 2 - 45 ), 'CircleEmpty');
+        buttomAcompanhante.setDisplaySize(50, 50);
+        buttomAcompanhante.setAlpha(0.8);
+        buttomAcompanhante.setInteractive();
         //texto da opção acompanhante
         this.addCenteredBitmapText(width / 2 - 60, height / 2 - 50, 'Acompanhante');
 
         //Opção Jogador
-        const OpcaoJogador = this.add.image(Math.round(width / 2 + 75), Math.round(height / 2 - 45), 'CircleEmpty').setInteractive();
-        OpcaoJogador.setDisplaySize(50, 50);
+        const buttomJogador = this.add.image(Math.round(width / 2 + 75), Math.round(height / 2 - 45), 'CircleEmpty');
+        buttomJogador.setDisplaySize(50, 50);
+        buttomJogador.setAlpha(0.8);
+        buttomJogador.setInteractive();
         //texto da opção jogador
         this.addCenteredBitmapText(width / 2 + 40, height / 2 - 50, 'Jogador');
 
@@ -150,6 +154,7 @@ export class RegisterScene extends Phaser.Scene {
         this.campoAtivo = '';
         this.mostrarSenha = false;
         this.cursorVisible = true;
+        this.tipoUsuario = '';
 
         this.time.addEvent({
             delay: 500,
@@ -262,30 +267,40 @@ export class RegisterScene extends Phaser.Scene {
                 this.atualizarExibicaoSenhas();
             }
         });
+         //clique na opção acompanhante
+        //faz com que se um circulo for selecionado o outro seja desmarcado, e armazena o tipo de usuario escolhido em uma variável
+        buttomAcompanhante.on('pointerdown', () => {
+            buttomAcompanhante.setTexture('CircleFilled');
+            buttomJogador.setTexture('CircleEmpty');
+            tipoUsuario = 'acompanhante';
+        });
+
+        //clique na opção jogador
+        //faz com que se um circulo for selecionado o outro seja desmarcado, e armazena o tipo de usuario escolhido em uma variável
+        buttomJogador.on('pointerdown', () => {
+            buttomJogador.setTexture('CircleFilled');
+            buttomAcompanhante.setTexture('CircleEmpty');
+            tipoUsuario = 'jogador';
+        });
 
         //funcionamento do botão de confirmar
         confirmButtom.on('pointerdown', () => {
             confirmButtom.setTint(0xff0000);
            
-            if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '') {
+            if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '' || this.tipoUsuario === '') {
                 this.ErroScreen('Preencha todos os campos!');
-                //Aqui dá um tempo para o jogador ler a mensagem de erro antes de reiniciar a cena
-               this.time.delayedCall(1000, () => {
-                return this.scene.restart();
-               });
+                return;
             }           
             else{
                 const registerManager = new RegisterManager();
-                const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada);
+                const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada, this.tipoUsuario);
                
                 if (resultado.dados == null) {
                     this.ErroScreen(resultado.erro);
-                    //Aqui dá um tempo para o jogador ler a mensagem de erro antes de reiniciar a cena
-                   this.time.delayedCall(1000, () => {
-                return this.scene.restart();
-               });
+                    return;
                 } else {
                     return this.scene.start('LoginScene');
+                
                 }
             }
         });
@@ -295,6 +310,7 @@ export class RegisterScene extends Phaser.Scene {
             backButtom.setTint(0xff0000);
             return this.scene.start('LoginScene');
         });
+
     }
 
     // atualiza a exibição do email e senha, mostrando o cursor piscando
@@ -315,13 +331,15 @@ export class RegisterScene extends Phaser.Scene {
             this.confirmSenhaText.setText('*'.repeat(this.confirmSenhaDigitada.length) + (this.campoAtivo === 'confirmSenha' ? cursor : ''));
         }
     }
+
+
     
     //função para exibir mensagens de erro
     ErroScreen(mensagem) {
         const {width, height} = this.scale;
          
         //centraliza a mensagem de erro e a pinta de vermelho, depois de 1 segundo ela desaparece e limpa os campos de texto
-        const errorText = this.addCenteredBitmapText(width / 2, height / 2 - 50, mensagem);
+        const errorText = this.addCenteredBitmapText(width / 2, height / 2 - 63, mensagem);
         errorText.setDepth(100);
         errorText.setTint(0xff0000);
    
@@ -332,6 +350,7 @@ export class RegisterScene extends Phaser.Scene {
             this.senhaDigitada = '';
             this.confirmSenhaDigitada = '';
             this.atualizarExibicaoSenhas();
+            return this.scene.start('RegisterScene'); // Reinicia a cena para limpar os campos e mensagens
         });
     }
 }
