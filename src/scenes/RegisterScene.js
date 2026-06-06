@@ -192,6 +192,12 @@ export class RegisterScene extends Phaser.Scene {
             this.atualizarExibicaoSenhas();
         });
 
+         //constantes para limitar o número de caracteres que o jogador pode digitar em cada campo
+        const limite_email = 29;
+        const limite_usuario = 25;
+        const limite_senha = 25; 
+        const limite_confirmSenha = 25;
+       
         //ativar o teclado para digitar
         this.input.keyboard.on('keydown', (event) => {
             if (this.campoAtivo === '') return;
@@ -220,16 +226,16 @@ export class RegisterScene extends Phaser.Scene {
             }
 
             if(event.key.length === 1) {
-                if (this.campoAtivo === 'usuario') {
+                if (this.campoAtivo === 'usuario' && this.userDigitado.length < limite_usuario) {
                     this.userDigitado += event.key;
                 }
-                else if (this.campoAtivo === 'email') {
+                else if (this.campoAtivo === 'email' && this.emailDigitado.length < limite_email) {
                     this.emailDigitado += event.key;
                 }
-                else if (this.campoAtivo === 'senha') {
+                else if (this.campoAtivo === 'senha' && this.senhaDigitada.length < limite_senha) {
                     this.senhaDigitada += event.key;
                 }
-                else if (this.campoAtivo === 'confirmSenha') {
+                else if (this.campoAtivo === 'confirmSenha' && this.confirmSenhaDigitada.length < limite_confirmSenha) {
                     this.confirmSenhaDigitada += event.key;
                 }
                 this.cursorVisible = true;
@@ -243,7 +249,10 @@ export class RegisterScene extends Phaser.Scene {
            
             if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '') {
                 this.ErroScreen('Preencha todos os campos!');
-                return; 
+                //Aqui dá um tempo para o jogador ler a mensagem de erro antes de reiniciar a cena
+               this.time.delayedCall(1000, () => {
+                return this.scene.restart();
+               });
             }           
             else{
                 const registerManager = new RegisterManager();
@@ -251,7 +260,10 @@ export class RegisterScene extends Phaser.Scene {
                
                 if (resultado.dados == null) {
                     this.ErroScreen(resultado.erro);
-                    return; 
+                    //Aqui dá um tempo para o jogador ler a mensagem de erro antes de reiniciar a cena
+                   this.time.delayedCall(1000, () => {
+                return this.scene.restart();
+               });
                 } else {
                     return this.scene.start('LoginScene');
                 }
