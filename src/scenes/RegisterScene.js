@@ -28,6 +28,13 @@ export class RegisterScene extends Phaser.Scene {
 
         //fonte
         this.load.bitmapFont('pixelFont', 'assets/fonts/pixelFont/pixelFont.png', 'assets/fonts/pixelFont/pixelFont.xml');
+
+        //botão de escolha : Acompanhante ou  Jogador
+        //circulo vazio
+        this.load.image('CircleEmpty', 'assets/ui/CircleEmpty.png');
+
+        //Circulo cheio
+        this.load.image('CircleFilled', 'assets/ui/CircleFilled.png');
     }
     
     create() {
@@ -61,6 +68,19 @@ export class RegisterScene extends Phaser.Scene {
 
         //Titulo da tela de cadastro
         this.addCenteredBitmapText(width / 2, height / 2 - 75, 'Tela de Cadastro');
+        
+        //Caixa de escolha : Acompanhante ou  Jogador
+        //Opção Acompanhante
+        const OpcaoAcompanhante = this.add.image(Math.round(width / 2 - 10 ), Math.round(height / 2 - 45 ), 'CircleEmpty').setInteractive();
+        OpcaoAcompanhante.setDisplaySize(50, 50);
+        //texto da opção acompanhante
+        this.addCenteredBitmapText(width / 2 - 60, height / 2 - 50, 'Acompanhante');
+
+        //Opção Jogador
+        const OpcaoJogador = this.add.image(Math.round(width / 2 + 75), Math.round(height / 2 - 45), 'CircleEmpty').setInteractive();
+        OpcaoJogador.setDisplaySize(50, 50);
+        //texto da opção jogador
+        this.addCenteredBitmapText(width / 2 + 40, height / 2 - 50, 'Jogador');
 
         //Usuario
         this.addCenteredBitmapText(width / 2 - 60, height / 2 - 25, 'Usuario:');
@@ -84,7 +104,7 @@ export class RegisterScene extends Phaser.Scene {
         emailBox.setInteractive();
         
         //escrever dentro da caixa de email
-        this.emailText = this.add.bitmapText(Math.round(width / 2 - 60 + 23), Math.round(height / 2 - 8), 'pixelFont', '', 16);
+        this.emailText = this.add.bitmapText(Math.round(width / 2 - 60 + 24), Math.round(height / 2 - 8), 'pixelFont', '', 16);
 
         //Senha
         this.addCenteredBitmapText(width / 2 - 60, height / 2 + 20, 'Senha:');
@@ -193,7 +213,7 @@ export class RegisterScene extends Phaser.Scene {
         });
 
          //constantes para limitar o número de caracteres que o jogador pode digitar em cada campo
-        const limite_email = 29;
+        const limite_email = 27;
         const limite_usuario = 25;
         const limite_senha = 25; 
         const limite_confirmSenha = 25;

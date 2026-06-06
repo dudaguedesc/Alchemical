@@ -78,7 +78,7 @@ export class LoginScene extends Phaser.Scene {
        emailBox.setAlpha(0.8); 
        emailBox.setInteractive();
        //escrever dentro da caixa de email
-      this.emailText = this.add.bitmapText(Math.round(width / 2 - 30), Math.round(height / 2 + 2), 'pixelFont', '', 16);
+      this.emailText = this.add.bitmapText(Math.round(width / 2 - 32), Math.round(height / 2 + 2), 'pixelFont', '', 16);
    
       //senha
        this.addCenteredBitmapText(width / 2 - 52, height / 2 + 30, 'Senha:');
@@ -151,6 +151,10 @@ export class LoginScene extends Phaser.Scene {
          this.cursorVisible = true;
          this.atualizarExibicaoSenhas();
       });
+    
+      //constantes para limitar o número de caracteres que o jogador pode digitar em cada campo
+      const limite_email = 30;
+      const limite_senha = 25;
 
       //ativar o teclado para digitar
       this.input.keyboard.on('keydown', (event) => {
@@ -175,10 +179,10 @@ export class LoginScene extends Phaser.Scene {
          }
          if(event.key.length === 1) {
       
-         if (this.campoAtivo === 'email') {
+         if (this.campoAtivo === 'email' && this.emailDigitado.length < limite_email) {
             this.emailDigitado += event.key;
          }
-         else if (this.campoAtivo === 'senha') {
+         else if (this.campoAtivo === 'senha' && this.senhaDigitada.length < limite_senha) {
             this.senhaDigitada += event.key;
          }
          this.cursorVisible = true;
