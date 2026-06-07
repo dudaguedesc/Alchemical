@@ -13,8 +13,7 @@ export let options = {
 };
 
 export default function () {
-  // porta 5500 pq é a do vscode, tem q mudar dps
-  const url = 'http://localhost:5500/api/register';
+  const url = 'http://localhost:3000/api/register';
   
   const payload = JSON.stringify({
     email: `k6bot_${__VU}_${__ITER}@gmail.com`, 
