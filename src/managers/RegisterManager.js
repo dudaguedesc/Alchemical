@@ -3,7 +3,7 @@ import { AuthManager } from './AuthManager.js';
 export class RegisterManager
 {
     // usamos async porque a comunicaçao com a base de dados (supabase) nao e instantanea
-    async DoRegister(nomeJogador, email, password, confirmPassword)
+    async DoRegister(nomeJogador, email, password, confirmPassword, tipoUsuario)
     {
         // verificaçoes locais
         if(this.verifyUser(nomeJogador) == false){
@@ -21,9 +21,12 @@ export class RegisterManager
         if(this.verifyConfirmPassword(password, confirmPassword) == false){
             return {dados: null, erro: "As senhas não coincidem"};
         }
+        if(tipoUsuario != "jogador" && tipoUsuario != "desenvolvedor"){
+            return {dados: null, erro: "Tipo de usuário inválido"};
+        }
       
         // o await faz com que o código espere a resposta da base de dados antes de continuar, garantindo que temos os dados ou o erro antes de prosseguir
-        const { data, error } = await AuthManager.register(email, password, nomeJogador);
+        const { data, error } = await AuthManager.register(email, password, nomeJogador, tipoUsuario);
 
         if (error) {
             return {dados: null, erro: error.message}; 
