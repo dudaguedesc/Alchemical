@@ -6,17 +6,15 @@ import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
 
 export let options = {
   stages: [
-    { duration: '30s', target: 50 }, // carga maior
+    { duration: '30s', target: 50 }, 
     { duration: '1m', target: 50 },  
     { duration: '30s', target: 0 },  
   ],
 };
 
 export default function () {
-  // tem q trocar a porta pra do backend tb
-  const url = 'http://localhost:5500/api/login'; 
-  
-  // trocar pra algum email q esteja no banco
+  const url = 'http://localhost:3000/api/login'; 
+  //loginzinho p testar eba
   const payload = JSON.stringify({
     email: 'jogador_teste@gmail.com', 
     password: 'senhaforte123'
