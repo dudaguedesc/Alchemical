@@ -272,7 +272,7 @@ export class RegisterScene extends Phaser.Scene {
         buttomAcompanhante.on('pointerdown', () => {
             buttomAcompanhante.setTexture('CircleFilled');
             buttomJogador.setTexture('CircleEmpty');
-            tipoUsuario = 'acompanhante';
+            this.tipoUsuario = 'acompanhante';
         });
 
         //clique na opção jogador
@@ -280,17 +280,18 @@ export class RegisterScene extends Phaser.Scene {
         buttomJogador.on('pointerdown', () => {
             buttomJogador.setTexture('CircleFilled');
             buttomAcompanhante.setTexture('CircleEmpty');
-            tipoUsuario = 'jogador';
+            this.tipoUsuario = 'jogador';
         });
 
         //funcionamento do botão de confirmar
         confirmButtom.on('pointerdown', () => {
             confirmButtom.setTint(0xff0000);
-           
+        
             if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '' || this.tipoUsuario === '') {
                 this.ErroScreen('Preencha todos os campos!');
                 return;
-            }           
+            }  
+
             else{
                 const registerManager = new RegisterManager();
                 const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada, this.tipoUsuario);
@@ -298,7 +299,8 @@ export class RegisterScene extends Phaser.Scene {
                 if (resultado.dados == null) {
                     this.ErroScreen(resultado.erro);
                     return;
-                } else {
+                }
+                 else {
                     return this.scene.start('LoginScene');
                 
                 }
