@@ -13,8 +13,7 @@ export let options = {
 };
 
 export default function () {
-  // msm coisa do outro teste, porta 5500 do live server
-  const url = 'http://localhost:5500/api/progresso';
+  const url = 'http://localhost:3000/api/progresso';
 
   const payload = JSON.stringify({
     email_jogador: `bot_${__VU}@gmail.com`,
