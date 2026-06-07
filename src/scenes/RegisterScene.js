@@ -300,6 +300,10 @@ export class RegisterScene extends Phaser.Scene {
                     this.ErroScreen(resultado.erro);
                     return;
                 }
+              else if(resultado === null){
+                 this.ErroScreen('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+                 return;
+              }
                  else {
                     return this.scene.start('LoginScene');
                 
