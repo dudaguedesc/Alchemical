@@ -12,6 +12,10 @@
   * **Vazão:** 37 requisições por segundo (Total de 4.532 requisições completadas)
   * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
   * **Gráficos / Resultados:** * **
+  * <img width="1312" height="757" alt="WhatsApp Image 2026-06-08 at 19 27 27 (1)" src="https://github.com/user-attachments/assets/32013663-0923-47d8-a7e7-2be3a757ee66" />
+  *<img width="1252" height="205" alt="WhatsApp Image 2026-06-08 at 19 27 44 (1)" src="https://github.com/user-attachments/assets/f8c4f1d3-c66e-4950-9d3f-faf2a7b88e83" />
+
+
 
 * **LEVANTAMENTO DE HIPÓTESES:**
   * O excelente tempo de resposta (1.67 ms) e a taxa zero de erros (0.00%) mesmo com 50 VUs disputando um pool de 20 conexões comprovam a alta eficácia do ecossistema assíncrono do Node.js. O MySQL processou as validações de credenciais rapidamente devido à boa estruturação da tabela. Caso a tabela de contas cresça exponencialmente no futuro, a ausência de um índice composto (`email` + `senha`) poderá transformar essas buscas em *Full Table Scans*, o que fatalmente aumentaria a latência e criaria um gargalo de tempo de resposta além do limite do SLA.
