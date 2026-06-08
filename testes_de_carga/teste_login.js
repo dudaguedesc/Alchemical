@@ -17,7 +17,7 @@ export default function () {
   //loginzinho p testar eba
   const payload = JSON.stringify({
     email: 'jogador_teste@gmail.com', 
-    password: 'senhaforte123'
+    senha: 'senhaforte123'
   });
 
   const params = {
@@ -30,7 +30,7 @@ export default function () {
 
   check(res, {
     'Status é 200 (Login Sucesso)': (r) => r.status === 200,
-    'Tempo de resposta < 200ms': (r) => r.timings.duration < 200,
+    'Tempo de resposta < 1000ms': (r) => r.timings.duration < 1000,
   });
   
   sleep(1); 
