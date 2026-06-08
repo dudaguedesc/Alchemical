@@ -49,7 +49,7 @@ meio do sistema.
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Gráficos / Resultados:** * **Gráficos / Resultados:** ![Resultado do Teste de Progresso](testes_de_carga/teste1.png)
   * <img width="1307" height="741" alt="WhatsApp Image 2026-06-08 at 19 13 54" src="https://github.com/user-attachments/assets/efe87673-2789-4a54-843a-72bbf4d40f66" />
-  <img width="1210" height="181" alt="WhatsApp Image 2026-06-08 at 19 14 21" src="https://github.com/user-attachments/assets/e0980fd1-015e-4ca9-b805-ff5bea6aee81" />
+  * <img width="1210" height="181" alt="WhatsApp Image 2026-06-08 at 19 14 21" src="https://github.com/user-attachments/assets/e0980fd1-015e-4ca9-b805-ff5bea6aee81" />
 
 
 
@@ -67,8 +67,11 @@ meio do sistema.
   * **Vazão:** 14.58 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Gráficos / Resultados:** ![Resultado do Teste de Autenticação](testes_de_carga/teste2.png)
-  * <img width="1312" height="757" alt="WhatsApp Image 2026-06-08 at 19 27 27" src="https://github.com/user-attachments/assets/577a8a06-01b4-4eb6-8fd5-12cd767e85f0" />
-  <img width="1252" height="205" alt="WhatsApp Image 2026-06-08 at 19 27 44" src="https://github.com/user-attachments/assets/cbb6e2ed-d781-41eb-b1d9-e31c0aec87c8" />
+  * <img width="1315" height="807" alt="WhatsApp Image 2026-06-08 at 19 18 39 (1)" src="https://github.com/user-attachments/assets/d205914b-38c9-4696-a70d-b46c670e9b9c" />
+  *<img width="1258" height="205" alt="WhatsApp Image 2026-06-08 at 19 19 02 (1)" src="https://github.com/user-attachments/assets/74b2878f-be7e-49ef-bb85-ada6ee8790bd" />
+
+
+
 
 
 
