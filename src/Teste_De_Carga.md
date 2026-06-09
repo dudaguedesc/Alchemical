@@ -68,7 +68,7 @@
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas:**
   *(Evolução temporal da latência p95 com banco otimizado em modo WAL)*
-  ![Gráfico Registro Otimizado](chart (2).png)
+  ![Gráfico Registro Otimizado](chart(2).png)
 
 * **Melhorias/otimizações:**
   * **Arquivos modificados:** `servidor_falso.js`
