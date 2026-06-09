@@ -2,44 +2,43 @@
 
 **Integrantes:** Enzo Henrique de Oliveira Paulino, Maria Eduarda Guedes Correia, Leticia Martins Vianna
 
-*Nota: `servidor_falso.js` é o arquivo que foi utilizado para usarmos o node.js para nos possibilitar a execução dos testes. Ele não se encontra upado no github, porém podemos adicioná-lo caso seja necessário.*
+*Nota: `servidor_falso.js` é o arquivo que foi utilizado para usarmos o node.js para nos possibilitar a execução dos testes, ele não se encontra upado no github, porém posso adiciona-lo caso seja necesario - enzohop*
 
 ---
 
 ## Nome do Serviço 1: Autenticação de Usuário (Login)
 
 * **Tipo de operações:** Leitura (Consulta de validação na base de dados)
-* **Arquivos envolvidos:** `servidor_falso.js`, banco local.
+* **Arquivos envolvidos:** `servidor_falso.js`, `alchemical_db.sql`
 * **Arquivos com o código fonte de medição:** `teste_login.js`
-* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em banco de dados local. Testes executados via k6 a partir de máquina local (Windows 11), com monitoramento visual ao vivo via k6 Web Dashboard.
+* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em Banco de Dados Relacional MySQL local, gerenciado via driver `mysql2` utilizando um Pool de Conexões (Connection Limit: 20). Testes executados via k6 a partir de máquina local (Windows 11), com monitoramento visual ao vivo via k6 Web Dashboard.
 
 ### MEDIÇÃO 1 (Antes das Otimizações)
-* **Data da medição:** 08/06/2026
-* **Testes de carga (SLA):**
-  * **Latência (Tempo de resposta médio p95):** 6.62 ms
-  * **Vazão:** 37 requisições por segundo
-  * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
-  * **Taxa de falha:** 100% (4.520 falhas)
-* **GRÁFICOS comparativos das medições feitas (FALHAS):**
-  *[COLE AQUI O LINK DO GITHUB DA IMAGEM 1 DO ENZO MOSTRANDO O ERRO DE 6.62ms]*
-  *[COLE AQUI O LINK DO GITHUB DA IMAGEM 2 DO ENZO MOSTRANDO OS 0% DE SUCESSO]*
-* **Potenciais gargalos do sistema:** Como a tabela não possuía indexação na máquina local, o banco de dados precisava processar as validações varrendo todas as linhas (*Full Table Scan*). Ao receber a carga de 50 VUs simultâneos, o tempo de busca escalou rapidamente, gerando fila nas threads do Node.js e resultando em *Timeout* absoluto das requisições.
-
-### MEDIÇÃO 2 (Após Otimizações)
 * **Data da medição:** 08/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 1.67 ms
   * **Vazão:** 37 requisições por segundo (Total de 4.532 requisições completadas)
   * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
-* **GRÁFICOS comparativos das medições feitas (SUCESSO):**
-  *(Resultados obtidos após a aplicação de índices estruturais)*
+* **GRÁFICOS / Resultados (Sistema Base):**
   * <img width="1312" height="757" alt="WhatsApp Image 2026-06-08 at 19 27 27 (1)" src="https://github.com/user-attachments/assets/32013663-0923-47d8-a7e7-2be3a757ee66" />
   * <img width="1252" height="205" alt="WhatsApp Image 2026-06-08 at 19 27 44 (1)" src="https://github.com/user-attachments/assets/f8c4f1d3-c66e-4950-9d3f-faf2a7b88e83" />
+* **Potenciais gargalos do sistema:** O excelente tempo de resposta (1.67 ms) e a taxa zero de erros mesmo com 50 VUs comprovam a eficácia inicial. Contudo, caso a tabela cresça exponencialmente com novos jogadores, a ausência de um índice composto (`email` + `senha`) forçaria o banco a realizar *Full Table Scans*, o que inevitavelmente aumentaria a latência e estouraria o limite do SLA.
+
+### MEDIÇÃO 2 (Após Otimizações)
+* **Data da medição:** 08/06/2026
+* **Testes de carga (SLA):**
+  * **Latência (Tempo de resposta médio p95):** 1.52 ms
+  * **Vazão:** 37 requisições por segundo
+  * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
+  * **Taxa de falha:** 0%
+* **GRÁFICOS comparativos das medições feitas (Depois):**
+  *(Evolução temporal da latência comprovando a alta estabilidade após a criação do Índice)*
+  ![Gráfico Login Otimizado](chart_login.png)
 
 * **Melhorias/otimizações:**
   * **Arquivos modificados:** `servidor_falso.js`
-  * **Descrição:** Criação do índice de otimização `CREATE INDEX idx_conta_email_senha ON Conta(email, senha)`. Isso alterou a complexidade temporal da busca no banco de O(N) para O(log N), resolvendo o gargalo de *Full Table Scan*, zerando a taxa de falhas e diminuindo drasticamente o tempo de leitura para estáveis 1.67 ms.
+  * **Descrição:** Criação preventiva do índice estrutural `CREATE INDEX idx_conta_email_senha ON Conta(email, senha)`. A aplicação dessa otimização blindou o sistema contra varreduras completas, não apenas mantendo o SLA, mas achatando a latência p95 para **1.52 ms** com altíssima estabilidade linear, conforme demonstrado no gráfico evolutivo.
 
 ---
 
@@ -48,7 +47,7 @@
 * **Tipo de operações:** Inserção (Escrita Transacional na base de dados)
 * **Arquivos envolvidos:** `servidor_falso.js`
 * **Arquivos com o código fonte de medição:** `teste_auth.js`
-* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em banco de dados local. Testes executados via k6 a partir de máquina local (Windows 11).
+* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em Banco de Dados Relacional MySQL local, gerenciado via driver `mysql2` utilizando um Pool de Conexões (Connection Limit: 20). Testes executados via k6 a partir de máquina local (Windows 11).
 
 ### MEDIÇÃO 1 (Antes das Otimizações)
 * **Data da medição:** 08/06/2026
@@ -57,7 +56,7 @@
   * **Vazão:** 15 requisições por segundo em média (Total de 1.800 requisições)
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
-* **GRÁFICOS comparativos das medições feitas:**
+* **GRÁFICOS / Resultados (Antes):**
   * ![Resultado do Teste de Cadastro](testes_de_carga/teste1.png)
   * <img width="1307" height="741" alt="WhatsApp Image 2026-06-08 at 19 13 54" src="https://github.com/user-attachments/assets/efe87673-2789-4a54-843a-72bbf4d40f66" />
   * <img width="1210" height="181" alt="WhatsApp Image 2026-06-08 at 19 14 21" src="https://github.com/user-attachments/assets/e0980fd1-015e-4ca9-b805-ff5bea6aee81" />
@@ -70,7 +69,7 @@
   * **Vazão:** 15.18 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
-* **GRÁFICOS comparativos das medições feitas:**
+* **GRÁFICOS comparativos das medições feitas (Depois):**
   *(Evolução temporal da latência p95 com banco otimizado em modo WAL)*
   ![Gráfico Registro Otimizado](chart_2.png)
 
@@ -85,7 +84,7 @@
 * **Tipo de operações:** Escrita/Atualização no Banco (Tabela de Progresso)
 * **Arquivos envolvidos:** `servidor_falso.js`
 * **Arquivos com o código fonte de medição:** `teste_progresso.js`
-* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em banco de dados local. Testes executados via k6 a partir de máquina local (Windows 11).
+* **Descrição das configurações:** Servidor Node.js utilizando o framework Express rodando localmente (Porta 3000). Persistência em Banco de Dados Relacional MySQL local, gerenciado via driver `mysql2` utilizando um Pool de Conexões (Connection Limit: 20). Testes executados via k6 a partir de máquina local (Windows 11).
 
 ### MEDIÇÃO 1 (Antes das Otimizações)
 * **Data da medição:** 08/06/2026
@@ -93,8 +92,8 @@
   * **Latência (Tempo de resposta médio p95):** 0.81 ms
   * **Vazão:** 15 requisições por segundo (Total de 1.822 requisições tentadas)
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
-  * **Taxa de falha:** Leve pico de falhas (29 requisições perdidas por Lock)
-* **GRÁFICOS comparativos das medições feitas:**
+  * **Taxa de falha:** Leve pico de falhas (29 requisições perdidas)
+* **GRÁFICOS / Resultados (Antes - Com pico de falhas):**
   * ![Resultado do Teste de Progresso](testes_de_carga/teste2.png)
   * <img width="1315" height="807" alt="WhatsApp Image 2026-06-08 at 19 18 39 (1)" src="https://github.com/user-attachments/assets/d205914b-38c9-4696-a70d-b46c670e9b9c" />
   * <img width="1258" height="205" alt="WhatsApp Image 2026-06-08 at 19 19 02 (1)" src="https://github.com/user-attachments/assets/74b2878f-be7e-49ef-bb85-ada6ee8790bd" />
@@ -107,7 +106,7 @@
   * **Vazão:** 15.17 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0% (Erros completamente zerados)
-* **GRÁFICOS comparativos das medições feitas:**
+* **GRÁFICOS comparativos das medições feitas (Depois - Sem falhas):**
   *(Gráfico evolutivo de concorrência e latência estável sem ocorrência de falhas)*
   ![Gráfico Progresso Otimizado](chart.png)
 
