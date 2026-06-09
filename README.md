@@ -34,7 +34,8 @@
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas (Depois):**
   *(Evolução temporal da latência comprovando a alta estabilidade após a criação do Índice)*
-  ![Gráfico Login Otimizado](chart_login.png)
+  <br>
+  <img width="1452" height="453" alt="Gráfico Login Otimizado" src="https://github.com/user-attachments/assets/b8b22092-76fa-4bb2-bbd2-cb7327d3f59e" />
 
 * **Melhorias/otimizações:**
   * **Arquivos modificados:** `servidor_falso.js`
@@ -57,7 +58,6 @@
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
 * **GRÁFICOS / Resultados (Antes):**
-  * ![Resultado do Teste de Cadastro](testes_de_carga/teste1.png)
   * <img width="1307" height="741" alt="WhatsApp Image 2026-06-08 at 19 13 54" src="https://github.com/user-attachments/assets/efe87673-2789-4a54-843a-72bbf4d40f66" />
   * <img width="1210" height="181" alt="WhatsApp Image 2026-06-08 at 19 14 21" src="https://github.com/user-attachments/assets/e0980fd1-015e-4ca9-b805-ff5bea6aee81" />
 * **Potenciais gargalos do sistema:** Operações de inserção sem suporte a escritas concorrentes assíncronas bloqueiam o banco (*Database Lock*) durante a transação para garantir integridade. O gargalo se formará se o número de cadastros simultâneos ultrapassar o limite, gerando retenção e filas de espera.
@@ -71,7 +71,8 @@
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas (Depois):**
   *(Evolução temporal da latência p95 com banco otimizado em modo WAL)*
-  ![Gráfico Registro Otimizado](chart_2.png)
+  <br>
+  <img width="1212" height="371" alt="Gráfico Registro Otimizado" src="https://github.com/user-attachments/assets/16435c7b-4047-4c22-af2a-779662cc49dd" />
 
 * **Melhorias/otimizações:**
   * **Arquivos modificados:** `servidor_falso.js`
@@ -94,9 +95,8 @@
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** Leve pico de falhas (29 requisições perdidas)
 * **GRÁFICOS / Resultados (Antes - Com pico de falhas):**
-  * ![Resultado do Teste de Progresso](testes_de_carga/teste2.png)
   * <img width="1315" height="807" alt="WhatsApp Image 2026-06-08 at 19 18 39 (1)" src="https://github.com/user-attachments/assets/d205914b-38c9-4696-a70d-b46c670e9b9c" />
-  * <img width="1258" height="205" alt="WhatsApp Image 2026-06-08 at 19 19 02 (1)" src="https://github.com/user-attachments/assets/74b2878f-be7e-49ef-bb85-ada6ee8790bd" />
+* <img width="1258" height="205" alt="WhatsApp Image 2026-06-08 at 19 19 02 (1)" src="https://github.com/user-attachments/assets/74b2878f-be7e-49ef-bb85-ada6ee8790bd" />
 * **Potenciais gargalos do sistema:** A saturação momentânea por *Locks* de tabela durante escritas simultâneas no encerramento do volume de dados gerou contenção nas portas locais, ocasionando 29 falhas de *time-out* interno na comunicação com o driver do banco.
 
 ### MEDIÇÃO 2 (Após Otimizações)
@@ -108,7 +108,8 @@
   * **Taxa de falha:** 0% (Erros completamente zerados)
 * **GRÁFICOS comparativos das medições feitas (Depois - Sem falhas):**
   *(Gráfico evolutivo de concorrência e latência estável sem ocorrência de falhas)*
-  ![Gráfico Progresso Otimizado](chart.png)
+  <br>
+  <img width="1318" height="434" alt="Gráfico Progresso Otimizado" src="https://github.com/user-attachments/assets/f6236310-0040-4ac8-bbe8-81eb51904088" />
 
 * **Melhorias/otimizações:**
   * **Arquivos modificados:** `servidor_falso.js`
