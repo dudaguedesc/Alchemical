@@ -131,19 +131,17 @@ export class Start extends Phaser.Scene {
         this.tweens.add({ targets: [title, btnStart, btnContinue, btnOptions, this.selectorSprite], alpha: 1, duration: 2500, ease: 'Power2' });
         this.tweens.add({ targets: glow, alpha: 0.7, duration: 3000, ease: 'Sine.easeInOut' });
 
-        //QA BACKDOOR PARA O SELENIUM
-        const btnSelenium = document.createElement('button');
-        btnSelenium.id = 'btn-start-game';
-        btnSelenium.innerText = 'Start';
-        btnSelenium.style.opacity = '0.01'; 
-        btnSelenium.style.position = 'absolute';
+        const htmlStart = document.createElement('button');
+        htmlStart.id = 'btn-start-game';
+        htmlStart.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent;';
+
+        this.add.dom(width / 2, height / 2, htmlStart);
         
-        this.add.dom(10, 10, btnSelenium);
-        
-        btnSelenium.onclick = () => {
-            // Pula a cutscene e vai direto para a fase pro teste ser rápido
-            this.scene.start('Level_1');
+        htmlStart.onclick = () => {
+            this.selectedButtonIndex = 0;
+            this.triggerMenuAction();
         };
+
     }
 
     setupMenuInputs() {
