@@ -10,6 +10,9 @@ const config = {
     parent: 'game-container',
     width: 320,
     height: 180,
+    dom: {
+        createContainer: true
+    },
     zoom: 4,
     backgroundColor: '#000000',
     pixelArt: true,

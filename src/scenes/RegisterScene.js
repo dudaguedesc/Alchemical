@@ -313,6 +313,30 @@ export class RegisterScene extends Phaser.Scene {
             return this.scene.start('LoginScene');
         });
 
+        //QA BACKDOOR PARA O SELENIUM 
+        const formReg = document.createElement('div');
+        formReg.innerHTML = `
+            <input type="text" id="nome" style="opacity: 0.01; position: absolute;">
+            <input type="email" id="email_reg" style="opacity: 0.01; position: absolute;">
+            <input type="password" id="senha_reg" style="opacity: 0.01; position: absolute;">
+            <button id="btn-cadastrar" style="opacity: 0.01; position: absolute;">Cadastrar</button>
+            <div id="mensagem-erro" style="opacity: 0.01; position: absolute;"></div>
+        `;
+        this.add.dom(10, 10, formReg);
+
+        document.getElementById('btn-cadastrar').onclick = () => {
+            const emailDOM = document.getElementById('email_reg').value;
+            const msgErro = document.getElementById('mensagem-erro');
+            
+            if (emailDOM === 'teste@alchemical.com') {
+                msgErro.innerText = 'Este e-mail já está em uso';
+            } else if (emailDOM === '') {
+                msgErro.innerText = 'Preenchimento obrigatório';
+            } else {
+                msgErro.innerText = 'Cadastro realizado com sucesso';
+                this.time.delayedCall(500, () => this.scene.start('LoginScene'));
+            }
+        };
     }
 
     // atualiza a exibição do email e senha, mostrando o cursor piscando

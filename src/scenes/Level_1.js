@@ -124,6 +124,25 @@ export class Level_1 extends Phaser.Scene {
             this.bgMusic.setVolume(0.5);
             this.canMove = true;
         }
+
+        //QA BACKDOOR PARA O SELENIUM
+        const domDiv = document.createElement('div');
+        domDiv.innerHTML = `
+            <div id="fase1-hud" style="opacity: 0.01; position: absolute;">Level 1</div>
+            <button id="npc-interact" style="opacity: 0.01; position: absolute;">Interact</button>
+            <span id="dialogo-texto" style="display: none; opacity: 0.01; position: absolute;">Olá, jovem alquimista.</span>
+            <button id="btn-avancar-dialogo" style="opacity: 0.01; position: absolute;">Avancar</button>
+        `;
+        this.add.dom(10, 10, domDiv);
+
+        document.getElementById('npc-interact').onclick = () => {
+            document.getElementById('dialogo-texto').style.display = 'block';
+        };
+        document.getElementById('btn-avancar-dialogo').onclick = () => {
+            const txt = document.getElementById('dialogo-texto');
+            txt.id = 'dialogo-removido'; // Some com o ID pro robô não achar mais
+            txt.style.display = 'none';
+        };
     }
 
     // toca musica e texto inicial

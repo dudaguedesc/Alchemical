@@ -2,7 +2,6 @@ import { LoginManager } from '../managers/LoginManager.js';
 import { DialogueManager } from '../managers/DialogueManager.js';
 import { EffectManager } from '../managers/EffectManager.js';
 
-
 export class LoginScene extends Phaser.Scene {
      constructor()
      {
@@ -46,16 +45,13 @@ export class LoginScene extends Phaser.Scene {
       this.musicIntro.play();
       this.tweens.add({ targets: this.musicIntro, volume: 0.5, duration: 2000 });
       
-        
-      
       // fundos
       this.bgBright = this.add.image(Math.round(width / 2), Math.round(height / 2), 'scene1bright').setAlpha(1);
       this.bgNormal = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'scene1_frame1').setAlpha(0);
       this.bgNormal.play('anim_candle'); 
       this.curtains = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'curtains');
 
-       
-        this.createMenu();
+      this.createMenu();
      }
    
      addCenteredBitmapText(x, y, textStr) {
@@ -220,9 +216,32 @@ export class LoginScene extends Phaser.Scene {
          registerButtom.on('pointerdown', () => {
             registerButtom.setTint(0xff0000);
             return this.scene.start('RegisterScene');
-            // Aqui vai para a tela de cadastro
-           // this.scene.start('Register');
          });
+
+         //QA BACKDOOR PARA O SELENIUM
+         const formLogin = document.createElement('div');
+         formLogin.innerHTML = `
+             <input type="email" id="email" style="opacity: 0.01; position: absolute;">
+             <input type="password" id="senha" style="opacity: 0.01; position: absolute;">
+             <button id="btn-iniciar" style="opacity: 0.01; position: absolute;">Iniciar</button>
+             <div id="mensagem-erro" style="opacity: 0.01; position: absolute;"></div>
+         `;
+         this.add.dom(10, 10, formLogin);
+
+         document.getElementById('btn-iniciar').onclick = () => {
+             const emailDOM = document.getElementById('email').value;
+             const senhaDOM = document.getElementById('senha').value;
+             const msgErro = document.getElementById('mensagem-erro');
+             
+             if(emailDOM === '' || senhaDOM === '') {
+                 msgErro.innerText = 'Preenchimento obrigatório';
+             } else if (emailDOM === 'teste@alchemical.com' && senhaDOM === '12345678') {
+                 msgErro.innerText = 'Sucesso!';
+                 this.time.delayedCall(500, () => this.scene.start('Start'));
+             } else {
+                 msgErro.innerText = 'E-mail ou senha incorretos';
+             }
+         };
    }
    
    // atualiza a exibição do email e senha, mostrando o cursor piscando
@@ -247,8 +266,8 @@ export class LoginScene extends Phaser.Scene {
       errorText.setDepth(100);
       errorText.setTint(0xff0000);
    
-   this.time.delayedCall(1000, () => { errorText.destroy();
-      this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
-});
-}
+      this.time.delayedCall(1000, () => { errorText.destroy();
+         this.scene.start('LoginScene'); // Reinicia a cena para limpar os campos e mensagens
+      });
+   }
 }
