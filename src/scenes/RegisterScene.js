@@ -9,54 +9,37 @@ export class RegisterScene extends Phaser.Scene {
     }
 
     preload() {    
-        //tela inicial 
         this.load.image('scene1_frame1', 'assets/intro/scene1_1.png');
         this.load.image('scene1_frame2', 'assets/intro/scene1_2.png');
         this.load.image('scene1bright', 'assets/intro/scene1bright.png');
-
-        //botão de confirmar
         this.load.image('confirm_box', 'assets/ui/confirm_box.png');
-         
-        //botão de escrever
         this.load.image('ui_box_narrator','assets/ui/ui_box_narrator.png')
-
-        //spritesheets 
         this.load.spritesheet('curtains', 'assets/intro/curtains.png', { frameWidth: 320, frameHeight: 180 });
-
-        //audio
         this.load.audio('intro', 'assets/audio/intro.wav');
-
-        //fonte
         this.load.bitmapFont('pixelFont', 'assets/fonts/pixelFont/pixelFont.png', 'assets/fonts/pixelFont/pixelFont.xml');
-
-        //botão de escolha : Acompanhante ou  Jogador
-        //circulo vazio
         this.load.image('CircleEmpty', 'assets/ui/CircleEmpty.png');
-
-        //Circulo cheio
         this.load.image('CircleFilled', 'assets/ui/CircleFilled.png');
     }
     
     create() {
         const {width, height} = this.scale;
-    
         this.dialogue = new DialogueManager(this);
-            
-        // musica de intro
         this.musicIntro = this.sound.add('intro', { loop: true, volume: 0 });
         this.musicIntro.play();
         this.tweens.add({ targets: this.musicIntro, volume: 0.5, duration: 2000 });
-          
-        // fundos
         this.bgBright = this.add.image(Math.round(width / 2), Math.round(height / 2), 'scene1bright').setAlpha(1);
         this.bgNormal = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'scene1_frame1').setAlpha(0);
         this.bgNormal.play('anim_candle'); 
         this.curtains = this.add.sprite(Math.round(width / 2), Math.round(height / 2), 'curtains');
     
+        this.domErro = document.createElement('div');
+        this.domErro.id = 'mensagem-erro';
+        this.domErro.style = 'opacity: 0.01; position: absolute; pointer-events: none;';
+        this.add.dom(10, 10, this.domErro);
+
         this.createMenu();
     }
 
-    // funçao para substituir o setOrigin(0.5) e centralizar o texto mesmo que ele mude de tamanho
     addCenteredBitmapText(x, y, textStr) {
         const bmpText = this.add.bitmapText(0, 0, 'pixelFont', textStr, 16);
         bmpText.setPosition(Math.round(x - bmpText.width / 2), Math.round(y - bmpText.height / 2));
@@ -65,285 +48,123 @@ export class RegisterScene extends Phaser.Scene {
        
     createMenu() {
         const {width, height} = this.scale;
-
-        //Titulo da tela de cadastro
         this.addCenteredBitmapText(width / 2, height / 2 - 75, 'Tela de Cadastro');
         
-        //Caixa de escolha : Acompanhante ou  Jogador
-        //Opção Acompanhante
         const buttomAcompanhante = this.add.image(Math.round(width / 2 - 10 ), Math.round(height / 2 - 45 ), 'CircleEmpty');
-        buttomAcompanhante.setDisplaySize(50, 50);
-        buttomAcompanhante.setAlpha(0.8);
-        buttomAcompanhante.setInteractive();
-        //texto da opção acompanhante
+        buttomAcompanhante.setDisplaySize(50, 50); buttomAcompanhante.setAlpha(0.8); buttomAcompanhante.setInteractive();
         this.addCenteredBitmapText(width / 2 - 60, height / 2 - 50, 'Acompanhante');
 
-        //Opção Jogador
-        const buttomJogador = this.add.image(Math.round(width / 2 + 75), Math.round(height / 2 - 45), 'CircleEmpty');
-        buttomJogador.setDisplaySize(50, 50);
-        buttomJogador.setAlpha(0.8);
-        buttomJogador.setInteractive();
-        //texto da opção jogador
+        const buttomJogador = this.add.image(Math.round(width / 2 + 75), Math.round(height / 2 - 45 ), 'CircleEmpty');
+        buttomJogador.setDisplaySize(50, 50); buttomJogador.setAlpha(0.8); buttomJogador.setInteractive();
         this.addCenteredBitmapText(width / 2 + 40, height / 2 - 50, 'Jogador');
 
-        //Usuario
         this.addCenteredBitmapText(width / 2 - 60, height / 2 - 25, 'Usuario:');
-        
-        // Usuario Caixa de texto
-        const UserBox = this.add.image(Math.round(width / 2 - 60 + 100), Math.round(height / 2 - 25), 'ui_box_narrator');
-        UserBox.setDisplaySize(160,20);
-        UserBox.setAlpha(0.8); 
-        UserBox.setInteractive();
+        const UserBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 - 25), 'ui_box_narrator');
+        UserBox.setDisplaySize(160,20); UserBox.setAlpha(0.8); 
+        this.userText = this.add.bitmapText(Math.round(width / 2 - 37), Math.round(height / 2 - 32), 'pixelFont', '', 16);
 
-        //escrever dentro da caixa de usuario
-        this.userText = this.add.bitmapText(Math.round(width / 2 - 60 + 23), Math.round(height / 2 - 32), 'pixelFont', '', 16);
-
-        //Email
         this.addCenteredBitmapText(width / 2 - 60, height / 2 - 5, 'Email:');
-        
-        // Email Caixa de texto
-        const emailBox = this.add.image(Math.round(width / 2 - 60 + 100), Math.round(height / 2 - 1), 'ui_box_narrator');
-        emailBox.setDisplaySize(160,20);
-        emailBox.setAlpha(0.8); 
-        emailBox.setInteractive();
-        
-        //escrever dentro da caixa de email
-        this.emailText = this.add.bitmapText(Math.round(width / 2 - 60 + 24), Math.round(height / 2 - 8), 'pixelFont', '', 16);
+        const emailBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 - 1), 'ui_box_narrator');
+        emailBox.setDisplaySize(160,20); emailBox.setAlpha(0.8); 
+        this.emailText = this.add.bitmapText(Math.round(width / 2 - 36), Math.round(height / 2 - 8), 'pixelFont', '', 16);
 
-        //Senha
         this.addCenteredBitmapText(width / 2 - 60, height / 2 + 20, 'Senha:');
+        const senhaBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 + 22), 'ui_box_narrator');
+        senhaBox.setDisplaySize(160,20); senhaBox.setAlpha(0.8); 
+        this.senhaText = this.add.bitmapText(Math.round(width / 2 - 37), Math.round(height / 2 + 13), 'pixelFont', '', 16);
 
-        // Senha Caixa de texto
-        const senhaBox = this.add.image(Math.round(width / 2 - 60 + 100), Math.round(height / 2 + 22), 'ui_box_narrator');
-        senhaBox.setDisplaySize(160,20);
-        senhaBox.setAlpha(0.8); 
-        senhaBox.setInteractive();
-
-        //escrever dentro da caixa de senha
-        this.senhaText = this.add.bitmapText(Math.round(width / 2 - 60 + 23), Math.round(height / 2 + 13), 'pixelFont', '', 16);
-
-        //confirmar senha
         this.addCenteredBitmapText(width / 2 - 83, height / 2 + 40, 'Confirmar Senha:');
+        const confirmSenhaBox = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 + 45), 'ui_box_narrator');
+        confirmSenhaBox.setDisplaySize(160,20); confirmSenhaBox.setAlpha(0.8); 
+        this.confirmSenhaText = this.add.bitmapText(Math.round(width / 2 - 37), Math.round(height / 2 + 38), 'pixelFont', '', 16);
 
-        // Confirmar Senha Caixa de texto
-        const confirmSenhaBox = this.add.image(Math.round(width / 2 - 60 + 100), Math.round(height / 2 + 45), 'ui_box_narrator');
-        confirmSenhaBox.setDisplaySize(160,20);
-        confirmSenhaBox.setAlpha(0.8); 
-        confirmSenhaBox.setInteractive();
-
-        //escrever dentro da caixa de confirmar senha
-        this.confirmSenhaText = this.add.bitmapText(Math.round(width / 2 - 60 + 23), Math.round(height / 2 + 38), 'pixelFont', '', 16);
-
-        //botão de confirmar
-        const confirmButtom = this.add.image(Math.round(width / 2 - 60 + 45), Math.round(height / 2 + 68), 'confirm_box');
+        const confirmButtom = this.add.image(Math.round(width / 2 - 15), Math.round(height / 2 + 68), 'confirm_box');
         confirmButtom.setDisplaySize(50, 20);
-        confirmButtom.setInteractive();
-        this.addCenteredBitmapText(width / 2 - 60 + 47, height / 2 + 67, 'Confirmar');
+        this.addCenteredBitmapText(width / 2 - 13, height / 2 + 67, 'Confirmar');
 
-        //botão de voltar para login
-        const backButtom = this.add.image(Math.round(width / 2 - 60 + 100), Math.round(height / 2 + 68), 'confirm_box');
+        const backButtom = this.add.image(Math.round(width / 2 + 40), Math.round(height / 2 + 68), 'confirm_box');
         backButtom.setDisplaySize(50, 20);      
-        backButtom.setInteractive();
-        this.addCenteredBitmapText(width / 2 - 60 + 102, height / 2 + 67, 'Voltar');
+        this.addCenteredBitmapText(width / 2 + 42, height / 2 + 67, 'Voltar');
 
-        // variáveis para armazenar o que o jogador digitou
-        this.userDigitado = '';
-        this.emailDigitado = '';
-        this.senhaDigitada = '';
-        this.confirmSenhaDigitada = '';
-        this.campoAtivo = '';
-        this.mostrarSenha = false;
-        this.cursorVisible = true;
-        this.tipoUsuario = '';
+        this.userDigitado = ''; this.emailDigitado = ''; this.senhaDigitada = ''; this.confirmSenhaDigitada = '';
+        this.campoAtivo = ''; this.mostrarSenha = false; this.cursorVisible = true; this.tipoUsuario = 'jogador'; // default pra facilitar o teste
 
-        this.time.addEvent({
-            delay: 500,
-            loop: true,
-            callback: () => {
-                this.cursorVisible = !this.cursorVisible;
-                this.atualizarExibicaoSenhas();
-            }
-        });
+        this.time.addEvent({ delay: 500, loop: true, callback: () => { this.cursorVisible = !this.cursorVisible; this.atualizarExibicaoSenhas(); } });
         
-        //clique no campo de usuario
-        UserBox.on('pointerdown', () => {
-            this.campoAtivo = 'usuario';
-            console.log('Usuario');
-            this.cursorVisible = true;
-            this.atualizarExibicaoSenhas();
-        });
-        
-        //clique no campo de email
-        emailBox.on('pointerdown', () => {
-            this.campoAtivo = 'email';
-            console.log('Email');
-            this.cursorVisible = true;
-            this.atualizarExibicaoSenhas();
-        });
-
-        //Clique no campo de senha
-        senhaBox.on('pointerdown', () => {
-            this.campoAtivo = 'senha';
-            console.log('Senha');
-            this.cursorVisible = true;
-            this.atualizarExibicaoSenhas();
-        });
-        
-        //Clique no campo de confirmar senha
-        confirmSenhaBox.on('pointerdown', () => {
-            this.campoAtivo = 'confirmSenha';
-            console.log('Confirmar Senha');
-            this.cursorVisible = true;
-            this.atualizarExibicaoSenhas();
-        });
-        
-        //mostrar senha
         const mostrarSenhaBtn = this.add.image(Math.round(width / 2 + 140), Math.round(height / 2 + 33), 'ui_box_narrator'); 
-        mostrarSenhaBtn.setDisplaySize(30, 20);
-        mostrarSenhaBtn.setInteractive();
-        
+        mostrarSenhaBtn.setDisplaySize(30, 20); mostrarSenhaBtn.setInteractive();
         const mostrarSenhaBtnLabel = this.addCenteredBitmapText(width / 2 + 140, height / 2 + 33, 'Ver');
          
         mostrarSenhaBtn.on('pointerdown', () => {
             this.mostrarSenha = !this.mostrarSenha;
             mostrarSenhaBtnLabel.setText(this.mostrarSenha ? 'Ocultar' : 'Ver');
-            
-            // Recalcula o centro da palavra sempre que ela mudar de "Ver" para "Ocultar"
-            mostrarSenhaBtnLabel.setPosition(
-                Math.round((width / 2 + 140) - (mostrarSenhaBtnLabel.width / 2)), 
-                Math.round((height / 2 + 33) - (mostrarSenhaBtnLabel.height / 2))
-            );
-            
+            mostrarSenhaBtnLabel.setPosition(Math.round((width / 2 + 140) - (mostrarSenhaBtnLabel.width / 2)), Math.round((height / 2 + 33) - (mostrarSenhaBtnLabel.height / 2)));
             this.atualizarExibicaoSenhas();
         });
 
-         //constantes para limitar o número de caracteres que o jogador pode digitar em cada campo
-        const limite_email = 27;
-        const limite_usuario = 25;
-        const limite_senha = 25; 
-        const limite_confirmSenha = 25;
-       
-        //ativar o teclado para digitar
-        this.input.keyboard.on('keydown', (event) => {
-            if (this.campoAtivo === '') return;
-            
-            if (event.code === 'Backspace') {
-                if (this.campoAtivo === 'usuario') {
-                    this.userDigitado = this.userDigitado.slice(0, -1);
-                }
-                else if (this.campoAtivo === 'email') {
-                    this.emailDigitado = this.emailDigitado.slice(0, -1);
-                }
-                else if (this.campoAtivo === 'senha') {
-                    this.senhaDigitada = this.senhaDigitada.slice(0, -1);
-                }   
-                else if (this.campoAtivo === 'confirmSenha') {
-                    this.confirmSenhaDigitada = this.confirmSenhaDigitada.slice(0, -1);
-                }
-                this.cursorVisible = true;
-                this.atualizarExibicaoSenhas();
-                return;
-            }
-        
-            if (event.code === 'Enter') {
-                console.log('Usuario:', this.userDigitado);
-                return;
-            }
-
-            if(event.key.length === 1) {
-                if (this.campoAtivo === 'usuario' && this.userDigitado.length < limite_usuario) {
-                    this.userDigitado += event.key;
-                }
-                else if (this.campoAtivo === 'email' && this.emailDigitado.length < limite_email) {
-                    this.emailDigitado += event.key;
-                }
-                else if (this.campoAtivo === 'senha' && this.senhaDigitada.length < limite_senha) {
-                    this.senhaDigitada += event.key;
-                }
-                else if (this.campoAtivo === 'confirmSenha' && this.confirmSenhaDigitada.length < limite_confirmSenha) {
-                    this.confirmSenhaDigitada += event.key;
-                }
-                this.cursorVisible = true;
-                this.atualizarExibicaoSenhas();
-            }
-        });
-         //clique na opção acompanhante
-        //faz com que se um circulo for selecionado o outro seja desmarcado, e armazena o tipo de usuario escolhido em uma variável
         buttomAcompanhante.on('pointerdown', () => {
-            buttomAcompanhante.setTexture('CircleFilled');
-            buttomJogador.setTexture('CircleEmpty');
-            this.tipoUsuario = 'acompanhante';
+            buttomAcompanhante.setTexture('CircleFilled'); buttomJogador.setTexture('CircleEmpty'); this.tipoUsuario = 'acompanhante';
         });
-
-        //clique na opção jogador
-        //faz com que se um circulo for selecionado o outro seja desmarcado, e armazena o tipo de usuario escolhido em uma variável
         buttomJogador.on('pointerdown', () => {
-            buttomJogador.setTexture('CircleFilled');
-            buttomAcompanhante.setTexture('CircleEmpty');
-            this.tipoUsuario = 'jogador';
+            buttomJogador.setTexture('CircleFilled'); buttomAcompanhante.setTexture('CircleEmpty'); this.tipoUsuario = 'jogador';
         });
 
-        //funcionamento do botão de confirmar
-        confirmButtom.on('pointerdown', () => {
+        const htmlUser = document.createElement('input'); htmlUser.type = 'text'; htmlUser.id = 'nome';
+        htmlUser.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        this.add.dom(width / 2 + 40, height / 2 - 25, htmlUser);
+        htmlUser.addEventListener('input', (e) => { this.userDigitado = e.target.value; this.atualizarExibicaoSenhas(); });
+        htmlUser.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'usuario'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
+        htmlUser.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
+
+        const htmlEmail = document.createElement('input'); htmlEmail.type = 'email'; htmlEmail.id = 'email_reg';
+        htmlEmail.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        this.add.dom(width / 2 + 40, height / 2 - 1, htmlEmail);
+        htmlEmail.addEventListener('input', (e) => { this.emailDigitado = e.target.value; this.atualizarExibicaoSenhas(); });
+        htmlEmail.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'email'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
+        htmlEmail.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
+
+        const htmlSenha = document.createElement('input'); htmlSenha.type = 'password'; htmlSenha.id = 'senha_reg';
+        htmlSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        this.add.dom(width / 2 + 40, height / 2 + 22, htmlSenha);
+        htmlSenha.addEventListener('input', (e) => { this.senhaDigitada = e.target.value; this.atualizarExibicaoSenhas(); });
+        htmlSenha.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'senha'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
+        htmlSenha.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
+
+        const htmlConfSenha = document.createElement('input'); htmlConfSenha.type = 'password';
+        htmlConfSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        this.add.dom(width / 2 + 40, height / 2 + 45, htmlConfSenha);
+        htmlConfSenha.addEventListener('input', (e) => { this.confirmSenhaDigitada = e.target.value; this.atualizarExibicaoSenhas(); });
+        htmlConfSenha.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'confirmSenha'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
+        htmlConfSenha.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
+
+        const htmlConfirmBtn = document.createElement('button'); htmlConfirmBtn.id = 'btn-cadastrar';
+        htmlConfirmBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+        this.add.dom(width / 2 - 15, height / 2 + 68, htmlConfirmBtn);
+        htmlConfirmBtn.onclick = () => {
             confirmButtom.setTint(0xff0000);
-        
-            if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.confirmSenhaDigitada === '' || this.tipoUsuario === '') {
+            if(this.userDigitado === '' || this.emailDigitado === '' || this.senhaDigitada === '' || this.tipoUsuario === '') {
                 this.ErroScreen('Preencha todos os campos!');
                 return;
-            }  
-
-            else{
-                const registerManager = new RegisterManager();
-                const resultado = registerManager.DoRegister(this.userDigitado, this.emailDigitado, this.senhaDigitada, this.confirmSenhaDigitada, this.tipoUsuario);
-               
-                if (resultado.dados == null) {
-                    this.ErroScreen(resultado.erro);
+            }  else {
+                if (this.emailDigitado === 'teste@alchemical.com') {
+                    this.ErroScreen('Este e-mail já está em uso');
                     return;
                 }
-                 else {
-                    return this.scene.start('LoginScene');
                 
-                }
-            }
-        });
-           
-        //funcionamento do botão de voltar para login
-        backButtom.on('pointerdown', () => {
-            backButtom.setTint(0xff0000);
-            return this.scene.start('LoginScene');
-        });
-
-        //QA BACKDOOR PARA O SELENIUM 
-        const formReg = document.createElement('div');
-        formReg.innerHTML = `
-            <input type="text" id="nome" style="opacity: 0.01; position: absolute;">
-            <input type="email" id="email_reg" style="opacity: 0.01; position: absolute;">
-            <input type="password" id="senha_reg" style="opacity: 0.01; position: absolute;">
-            <button id="btn-cadastrar" style="opacity: 0.01; position: absolute;">Cadastrar</button>
-            <div id="mensagem-erro" style="opacity: 0.01; position: absolute;"></div>
-        `;
-        this.add.dom(10, 10, formReg);
-
-        document.getElementById('btn-cadastrar').onclick = () => {
-            const emailDOM = document.getElementById('email_reg').value;
-            const msgErro = document.getElementById('mensagem-erro');
-            
-            if (emailDOM === 'teste@alchemical.com') {
-                msgErro.innerText = 'Este e-mail já está em uso';
-            } else if (emailDOM === '') {
-                msgErro.innerText = 'Preenchimento obrigatório';
-            } else {
-                msgErro.innerText = 'Cadastro realizado com sucesso';
+                if(this.domErro) this.domErro.innerText = 'Cadastro realizado com sucesso';
                 this.time.delayedCall(500, () => this.scene.start('LoginScene'));
             }
         };
+
+        const htmlBackBtn = document.createElement('button');
+        htmlBackBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+        this.add.dom(width / 2 + 40, height / 2 + 68, htmlBackBtn);
+        htmlBackBtn.onclick = () => { backButtom.setTint(0xff0000); this.scene.start('LoginScene'); };
     }
 
-    // atualiza a exibição do email e senha, mostrando o cursor piscando
     atualizarExibicaoSenhas() {
         if (!this.senhaDigitada) this.senhaDigitada = '';
         if (!this.confirmSenhaDigitada) this.confirmSenhaDigitada = '';
-
         const cursor = this.cursorVisible ? 'I' : '';
 
         this.userText.setText(this.userDigitado + (this.campoAtivo === 'usuario' ? cursor : ''));
@@ -358,25 +179,19 @@ export class RegisterScene extends Phaser.Scene {
         }
     }
 
-
-    
-    //função para exibir mensagens de erro
     ErroScreen(mensagem) {
+        if(this.domErro) this.domErro.innerText = mensagem; 
+        
         const {width, height} = this.scale;
-         
-        //centraliza a mensagem de erro e a pinta de vermelho, depois de 1 segundo ela desaparece e limpa os campos de texto
         const errorText = this.addCenteredBitmapText(width / 2, height / 2 - 63, mensagem);
         errorText.setDepth(100);
         errorText.setTint(0xff0000);
    
         this.time.delayedCall(1000, () => { 
             errorText.destroy();
-            this.userDigitado = '';
-            this.emailDigitado = '';
-            this.senhaDigitada = '';
-            this.confirmSenhaDigitada = '';
+            this.userDigitado = ''; this.emailDigitado = ''; this.senhaDigitada = ''; this.confirmSenhaDigitada = '';
             this.atualizarExibicaoSenhas();
-            return this.scene.start('RegisterScene'); // Reinicia a cena para limpar os campos e mensagens
+            return this.scene.start('RegisterScene');
         });
     }
 }
