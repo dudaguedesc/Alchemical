@@ -92,7 +92,7 @@ export class LoginScene extends Phaser.Scene {
 
       const htmlEmail = document.createElement('input');
       htmlEmail.type = 'email'; htmlEmail.id = 'email';
-      htmlEmail.style = 'width: 150px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+      htmlEmail.style = 'width: 150px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
       this.add.dom(width / 2 + 40, height / 2 + 10, htmlEmail);
       
       htmlEmail.addEventListener('input', (e) => { this.emailDigitado = e.target.value; this.atualizarExibicaoSenhas(); });
@@ -101,7 +101,7 @@ export class LoginScene extends Phaser.Scene {
 
       const htmlSenha = document.createElement('input');
       htmlSenha.type = 'password'; htmlSenha.id = 'senha';
-      htmlSenha.style = 'width: 150px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+      htmlSenha.style = 'width: 150px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
       this.add.dom(width / 2 + 40, height / 2 + 35, htmlSenha);
 
       htmlSenha.addEventListener('input', (e) => { this.senhaDigitada = e.target.value; this.atualizarExibicaoSenhas(); });
@@ -110,7 +110,7 @@ export class LoginScene extends Phaser.Scene {
 
       const htmlConfirm = document.createElement('button');
       htmlConfirm.id = 'btn-iniciar';
-      htmlConfirm.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+      htmlConfirm.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0; background: transparent; color: transparent;';
       this.add.dom(width / 2, height / 2 + 60, htmlConfirm);
       
       htmlConfirm.onclick = async () => {
@@ -138,7 +138,7 @@ export class LoginScene extends Phaser.Scene {
       };
 
       const htmlCadastrar = document.createElement('button');
-      htmlCadastrar.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+      htmlCadastrar.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0; background: transparent; color: transparent;';
       this.add.dom(width / 2 + 64, height / 2 + 60.5, htmlCadastrar);
       htmlCadastrar.onclick = () => {
          registerButtom.setTint(0xff0000);

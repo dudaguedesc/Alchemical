@@ -110,35 +110,35 @@ export class RegisterScene extends Phaser.Scene {
         });
 
         const htmlUser = document.createElement('input'); htmlUser.type = 'text'; htmlUser.id = 'nome';
-        htmlUser.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        htmlUser.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
         this.add.dom(width / 2 + 40, height / 2 - 25, htmlUser);
         htmlUser.addEventListener('input', (e) => { this.userDigitado = e.target.value; this.atualizarExibicaoSenhas(); });
         htmlUser.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'usuario'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
         htmlUser.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
 
         const htmlEmail = document.createElement('input'); htmlEmail.type = 'email'; htmlEmail.id = 'email_reg';
-        htmlEmail.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        htmlEmail.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
         this.add.dom(width / 2 + 40, height / 2 - 1, htmlEmail);
         htmlEmail.addEventListener('input', (e) => { this.emailDigitado = e.target.value; this.atualizarExibicaoSenhas(); });
         htmlEmail.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'email'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
         htmlEmail.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
 
         const htmlSenha = document.createElement('input'); htmlSenha.type = 'password'; htmlSenha.id = 'senha_reg';
-        htmlSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        htmlSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
         this.add.dom(width / 2 + 40, height / 2 + 22, htmlSenha);
         htmlSenha.addEventListener('input', (e) => { this.senhaDigitada = e.target.value; this.atualizarExibicaoSenhas(); });
         htmlSenha.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'senha'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
         htmlSenha.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
 
         const htmlConfSenha = document.createElement('input'); htmlConfSenha.type = 'password';
-        htmlConfSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box;';
+        htmlConfSenha.style = 'width: 160px; height: 20px; opacity: 0.01; cursor: text; border: none; padding: 0; outline: none; box-sizing: border-box; background: transparent; color: transparent;';
         this.add.dom(width / 2 + 40, height / 2 + 45, htmlConfSenha);
         htmlConfSenha.addEventListener('input', (e) => { this.confirmSenhaDigitada = e.target.value; this.atualizarExibicaoSenhas(); });
         htmlConfSenha.addEventListener('focus', () => { this.input.keyboard.enabled = false; this.campoAtivo = 'confirmSenha'; this.cursorVisible = true; this.atualizarExibicaoSenhas(); });
         htmlConfSenha.addEventListener('blur', () => { this.input.keyboard.enabled = true; });
 
         const htmlConfirmBtn = document.createElement('button'); htmlConfirmBtn.id = 'btn-cadastrar';
-        htmlConfirmBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+        htmlConfirmBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0; background: transparent; color: transparent;';
         this.add.dom(width / 2 - 15, height / 2 + 68, htmlConfirmBtn);
         htmlConfirmBtn.onclick = () => {
             confirmButtom.setTint(0xff0000);
@@ -157,7 +157,7 @@ export class RegisterScene extends Phaser.Scene {
         };
 
         const htmlBackBtn = document.createElement('button');
-        htmlBackBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0;';
+        htmlBackBtn.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; padding: 0; background: transparent; color: transparent;';
         this.add.dom(width / 2 + 40, height / 2 + 68, htmlBackBtn);
         htmlBackBtn.onclick = () => { backButtom.setTint(0xff0000); this.scene.start('LoginScene'); };
     }

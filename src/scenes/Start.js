@@ -65,6 +65,7 @@ export class Start extends Phaser.Scene {
 
         this.createMenu();
     }
+    
     createAnimations() {
         if (!this.anims.exists('anim_candle')) {
             this.anims.create({ key: 'anim_candle', frames: [{ key: 'scene1_frame1' }, { key: 'scene1_frame2' }], frameRate: 3, repeat: -1 });
@@ -131,17 +132,30 @@ export class Start extends Phaser.Scene {
         this.tweens.add({ targets: [title, btnStart, btnContinue, btnOptions, this.selectorSprite], alpha: 1, duration: 2500, ease: 'Power2' });
         this.tweens.add({ targets: glow, alpha: 0.7, duration: 3000, ease: 'Sine.easeInOut' });
 
+        
+        // Overlay do "Start"
         const htmlStart = document.createElement('button');
         htmlStart.id = 'btn-start-game';
-        htmlStart.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent;';
-
+        htmlStart.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
         this.add.dom(width / 2, height / 2, htmlStart);
         
         htmlStart.onclick = () => {
+            if (!this.isMenuReady) return;
             this.selectedButtonIndex = 0;
             this.triggerMenuAction();
         };
 
+        // Overlay do "Continue"
+        const htmlContinue = document.createElement('button');
+        htmlContinue.id = 'btn-continue-game';
+        htmlContinue.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        this.add.dom(width / 2, height / 2 + 24, htmlContinue);
+        
+        htmlContinue.onclick = () => {
+            if (!this.isMenuReady || this.continueDisabled) return;
+            this.selectedButtonIndex = 1;
+            this.triggerMenuAction();
+        };
     }
 
     setupMenuInputs() {
@@ -276,6 +290,20 @@ export class Start extends Phaser.Scene {
 
         this.updateConfirmCursor();
         this.setupConfirmInputs();
+        
+        // Overlay do botão "Sim"
+        this.htmlSim = document.createElement('button');
+        this.htmlSim.id = 'btn-confirm-yes';
+        this.htmlSim.style = 'width: 40px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        this.add.dom(width / 2 - 50, height / 2 + 18, this.htmlSim);
+        this.htmlSim.onclick = () => { this.confirmIndex = 0; this.resolveConfirm(); };
+
+        // Overlay do botão "Não"
+        this.htmlNao = document.createElement('button');
+        this.htmlNao.id = 'btn-confirm-no';
+        this.htmlNao.style = 'width: 40px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        this.add.dom(width / 2 + 50, height / 2 + 18, this.htmlNao);
+        this.htmlNao.onclick = () => { this.confirmIndex = 1; this.resolveConfirm(); };
     }
 
     updateConfirmCursor() {
@@ -325,6 +353,9 @@ export class Start extends Phaser.Scene {
 
         [this.confirmOverlay, this.confirmBox, this.confirmMsg,
          this.confirmOptYes, this.confirmOptNo, this.confirmCursor].forEach(o => o?.destroy());
+
+        if (this.htmlSim) this.htmlSim.remove();
+        if (this.htmlNao) this.htmlNao.remove();
 
         if (this.confirmIndex === 0) {
             // apaga save e inicia
