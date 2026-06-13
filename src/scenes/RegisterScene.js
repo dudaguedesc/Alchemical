@@ -37,6 +37,11 @@ export class RegisterScene extends Phaser.Scene {
         this.domErro.style = 'opacity: 0.01; position: absolute; pointer-events: none;';
         this.add.dom(10, 10, this.domErro);
 
+        this.domErro = document.createElement('div');
+        this.domErro.id = 'mensagem-erro';
+        this.domErro.style = 'position: absolute; left: -9999px;';
+        this.add.dom(10, 10, this.domErro);
+
         this.createMenu();
     }
 
@@ -180,18 +185,18 @@ export class RegisterScene extends Phaser.Scene {
     }
 
     ErroScreen(mensagem) {
-        if(this.domErro) this.domErro.innerText = mensagem; 
+        if(this.domErro) this.domErro.innerText = mensagem;
         
         const {width, height} = this.scale;
         const errorText = this.addCenteredBitmapText(width / 2, height / 2 - 63, mensagem);
         errorText.setDepth(100);
         errorText.setTint(0xff0000);
    
-        this.time.delayedCall(1000, () => { 
+        this.time.delayedCall(3000, () => { 
             errorText.destroy();
             this.userDigitado = ''; this.emailDigitado = ''; this.senhaDigitada = ''; this.confirmSenhaDigitada = '';
             this.atualizarExibicaoSenhas();
-            return this.scene.start('RegisterScene');
+            return this.scene.start('RegisterScene'); 
         });
     }
 }
