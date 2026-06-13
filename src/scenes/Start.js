@@ -8,56 +8,44 @@ export class Start extends Phaser.Scene {
     }
 
     preload() {
-        // assets da tela inicial
         this.load.image('scene1_frame1', 'assets/intro/scene1_1.png');
         this.load.image('scene1_frame2', 'assets/intro/scene1_2.png');
         this.load.image('scene1bright', 'assets/intro/scene1bright.png');
         this.load.image('selector', 'assets/intro/selector.png');
         this.load.image('livroZoom', 'assets/intro/livroZoom.png');
         
-        // interface
         this.load.image('ui_box_narrator', 'assets/ui/ui_box_narrator.png');
         this.load.image('ui_box_character', 'assets/ui/ui_box_character.png');
         this.load.image('confirm_box', 'assets/ui/confirm_box.png');
 
-        // efeitos
         this.load.spritesheet('flare', 'assets/intro/flare.png', { frameWidth: 16, frameHeight: 16 });
         this.load.image('textGlow', 'assets/intro/glow.png');
       
-        // spritesheets
         this.load.spritesheet('curtains', 'assets/intro/curtains.png', { frameWidth: 320, frameHeight: 180 });
         this.load.spritesheet('startTexts', 'assets/intro/startTexts.png', { frameWidth: 320, frameHeight: 180 });
         
-        // audio
         this.load.audio('intro', 'assets/audio/intro.wav');
         this.load.audio('burning', 'assets/audio/burning.wav');
         
-        // vozes
         this.load.audio('voice_a', 'assets/audio/voices/voice1/voice_a.wav');
         this.load.audio('voice_e', 'assets/audio/voices/voice1/voice_e.wav');
         this.load.audio('voice_i', 'assets/audio/voices/voice1/voice_i.wav');
         this.load.audio('voice_o', 'assets/audio/voices/voice1/voice_o.wav');
         this.load.audio('voice_u', 'assets/audio/voices/voice1/voice_u.wav');
 
-        // fontes
         this.load.bitmapFont('pixelFont', 'assets/fonts/pixelFont/pixelFont.png', 'assets/fonts/pixelFont/pixelFont.xml');
     }
 
     create() {
-         // é o que aparece na tela
-    
         const { width, height } = this.scale;
-
         this.dialogue = new DialogueManager(this);
 
-        // musica de intro
         this.musicIntro = this.sound.add('intro', { loop: true, volume: 0 });
         this.musicIntro.play();
         this.tweens.add({ targets: this.musicIntro, volume: 0.5, duration: 2000 });
 
         this.createAnimations();
 
-        // fundos
         this.bgBright = this.add.image(width / 2, height / 2, 'scene1bright').setAlpha(1);
         this.bgNormal = this.add.sprite(width / 2, height / 2, 'scene1_frame1').setAlpha(0);
         this.bgNormal.play('anim_candle'); 
@@ -85,14 +73,11 @@ export class Start extends Phaser.Scene {
     }
 
     createMenu() {
-     // CRIA os botões de menu (Start, Continue, Options)
-    // Mostra o título, o seletor, etc.
         const { width, height } = this.scale;
         this.uiGroup = this.add.group();
         this.selectedButtonIndex = 0;
         this.isMenuReady = true; 
 
-        // elementos do menu
         const glow = this.add.image(width / 2, height / 2, 'textGlow').setOrigin(0.5).setDepth(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD).setTint(0xffffff); 
         const selectorBaseX = (width / 2) - 60;
         this.selectorSprite = this.add.image(selectorBaseX, 0, 'selector').setDepth(20).setVisible(false).setAlpha(0);
@@ -104,7 +89,6 @@ export class Start extends Phaser.Scene {
         const btnContinue = this.add.sprite(centerX, centerY, 'startTexts', 2).setInteractive().setDepth(10).setAlpha(0);
         const btnOptions = this.add.sprite(centerX, centerY, 'startTexts', 3).setInteractive().setDepth(10).setAlpha(0);
 
-        // caixas de click
         btnStart.input.hitArea.setTo(110, 80, 100, 20);     
         btnContinue.input.hitArea.setTo(110, 102, 100, 20); 
         btnOptions.input.hitArea.setTo(110, 130, 100, 20);  
@@ -112,7 +96,6 @@ export class Start extends Phaser.Scene {
         this.menuButtons = [btnStart, btnContinue, btnOptions];
         this.uiGroup.addMultiple([glow, this.selectorSprite, title, btnStart, btnContinue, btnOptions]);
 
-        // desabilita continuar se nao tiver save
         this.continueDisabled = !SaveManager.hasSave();
         if (this.continueDisabled) {
             btnContinue.setTint(0x444444); 
@@ -132,25 +115,37 @@ export class Start extends Phaser.Scene {
         this.tweens.add({ targets: [title, btnStart, btnContinue, btnOptions, this.selectorSprite], alpha: 1, duration: 2500, ease: 'Power2' });
         this.tweens.add({ targets: glow, alpha: 0.7, duration: 3000, ease: 'Sine.easeInOut' });
 
+        // --- CAMADA DE VIDRO: MENU INICIAL ---
         
         // Overlay do "Start"
         const htmlStart = document.createElement('button');
         htmlStart.id = 'btn-start-game';
-        htmlStart.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        htmlStart.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent; outline: none;';
         this.add.dom(width / 2, height / 2, htmlStart);
         
+        htmlStart.onmouseenter = () => {
+            if (!this.isMenuReady) return;
+            this.selectedButtonIndex = 0;
+            this.updateSelectorPosition();
+        };
+
         htmlStart.onclick = () => {
             if (!this.isMenuReady) return;
             this.selectedButtonIndex = 0;
             this.triggerMenuAction();
         };
 
-        // Overlay do "Continue"
         const htmlContinue = document.createElement('button');
         htmlContinue.id = 'btn-continue-game';
-        htmlContinue.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
-        this.add.dom(width / 2, height / 2 + 24, htmlContinue);
+        htmlContinue.style = 'width: 100px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent; outline: none;';
+        this.add.dom(width / 2, height / 2 + 22, htmlContinue); // Posição ajustada milimetricamente
         
+        htmlContinue.onmouseenter = () => {
+            if (!this.isMenuReady || this.continueDisabled) return;
+            this.selectedButtonIndex = 1;
+            this.updateSelectorPosition();
+        };
+
         htmlContinue.onclick = () => {
             if (!this.isMenuReady || this.continueDisabled) return;
             this.selectedButtonIndex = 1;
@@ -168,6 +163,7 @@ export class Start extends Phaser.Scene {
             });
             btn.on('pointerdown', () => { if (this.isMenuReady) this.triggerMenuAction(); });
         });
+        
         this.input.keyboard.on('keydown', (event) => {
             if (!this.isMenuReady) return;
             switch (event.code) {
@@ -182,7 +178,6 @@ export class Start extends Phaser.Scene {
         const len = this.menuButtons.length;
         let next = (this.selectedButtonIndex + direction + len) % len;
 
-        // pula continuar se desabilitado
         if (next === 1 && this.continueDisabled) {
             next = (next + direction + len) % len;
         }
@@ -203,32 +198,26 @@ export class Start extends Phaser.Scene {
         this.input.keyboard.removeAllListeners('keydown');
 
         if (this.selectedButtonIndex === 0) {
-            // confirma novo jogo se tiver save
             if (SaveManager.hasSave()) {
-                this.showConfirmNewGame();
+                this.showConfirmNewGame(); 
             } else {
                 this.runIntroSequence();
             }
         } else if (this.selectedButtonIndex === 1) {
-            // continuar jogo
             const save = SaveManager.load();
             if (save) {
                 this.startContinue(save.level);
             } else {
-                console.log('nenhum save encontrado');
                 this.isMenuReady = true;
                 this.setupMenuInputs();
             }
         } else {
-            // outras opcoes
-            console.log('opcao em desenvolvimento');
             this.isMenuReady = true;
             this.setupMenuInputs();
         }
     }
 
     startContinue(levelKey) {
-        // fade out da musica e camera
         if (this.musicIntro) {
             this.tweens.add({
                 targets: this.musicIntro,
@@ -249,36 +238,20 @@ export class Start extends Phaser.Scene {
         
         if (this.selectorTween) this.selectorTween.pause(); 
 
-        // 0 = sim, 1 = nao (começa no nao)
         this.confirmIndex = 1;
 
-        // escurece o fundo
-        this.confirmOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.75)
-            .setDepth(60).setScrollFactor(0);
+        this.confirmOverlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.75).setDepth(60).setScrollFactor(0);
+        this.confirmBox = this.add.image(width / 2, height / 2, 'confirm_box').setDepth(61).setScrollFactor(0);
 
-        this.confirmBox = this.add.image(width / 2, height / 2, 'confirm_box')
-            .setDepth(61).setScrollFactor(0);
-
-        // texto de confirmacao
-        this.confirmMsg = this.add.bitmapText(width / 2, height / 2 - 16, 'pixelFont',
-            'O save atual será apagado.\nTem certeza que deseja iniciar um novo jogo?', 16)
+        this.confirmMsg = this.add.bitmapText(width / 2, height / 2 - 16, 'pixelFont', 'O save atual será apagado.\nTem certeza que deseja iniciar um novo jogo?', 16)
             .setOrigin(0.5, 0.5).setDepth(62).setScrollFactor(0);
 
-        // opcoes sim e nao
-        this.confirmOptYes = this.add.bitmapText(width / 2 - 50, height / 2 + 18, 'pixelFont', 'Sim', 16)
-            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
+        this.confirmOptYes = this.add.bitmapText(width / 2 - 50, height / 2 + 18, 'pixelFont', 'Sim', 16).setOrigin(0.5).setDepth(62).setScrollFactor(0);
+        this.confirmOptNo = this.add.bitmapText(width / 2 + 50, height / 2 + 18, 'pixelFont', 'Não', 16).setOrigin(0.5).setDepth(62).setScrollFactor(0);
 
-        this.confirmOptNo = this.add.bitmapText(width / 2 + 50, height / 2 + 18, 'pixelFont', 'Não', 16)
-            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
-
-        // cursor do seletor
-        this.confirmCursor = this.add.image(0, height / 2 + 20, 'selector')
-            .setOrigin(0.5).setDepth(62).setScrollFactor(0);
-
-        // controle de posicao do cursor
+        this.confirmCursor = this.add.image(0, height / 2 + 20, 'selector').setOrigin(0.5).setDepth(62).setScrollFactor(0);
         this.baseCursorX = 0;
 
-        // animacao de flutuar
         this.confirmTween = this.tweens.addCounter({
             from: 0, to: 360, duration: 1500, repeat: -1,
             onUpdate: (tween) => {
@@ -291,36 +264,41 @@ export class Start extends Phaser.Scene {
         this.updateConfirmCursor();
         this.setupConfirmInputs();
         
-        // Overlay do botão "Sim"
         this.htmlSim = document.createElement('button');
         this.htmlSim.id = 'btn-confirm-yes';
-        this.htmlSim.style = 'width: 40px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        this.htmlSim.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent; outline: none;';
         this.add.dom(width / 2 - 50, height / 2 + 18, this.htmlSim);
+        
+        this.htmlSim.onmouseenter = () => {
+            this.confirmIndex = 0;
+            this.updateConfirmCursor();
+        };
         this.htmlSim.onclick = () => { this.confirmIndex = 0; this.resolveConfirm(); };
 
-        // Overlay do botão "Não"
         this.htmlNao = document.createElement('button');
         this.htmlNao.id = 'btn-confirm-no';
-        this.htmlNao.style = 'width: 40px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent;';
+        this.htmlNao.style = 'width: 50px; height: 20px; opacity: 0.01; cursor: pointer; border: none; background: transparent; color: transparent; outline: none;';
         this.add.dom(width / 2 + 50, height / 2 + 18, this.htmlNao);
+        
+        this.htmlNao.onmouseenter = () => {
+            this.confirmIndex = 1;
+            this.updateConfirmCursor();
+        };
         this.htmlNao.onclick = () => { this.confirmIndex = 1; this.resolveConfirm(); };
     }
 
     updateConfirmCursor() {
         const { width } = this.scale;
         
-        // posiçao base do cursor
         const xYes = width / 2 - 50;
         const xNo = width / 2 + 50;
         this.baseCursorX = this.confirmIndex === 0 ? xYes - 26 : xNo - 26;
 
-        // destaca a opçao selecionada
         this.confirmOptYes.setTint(this.confirmIndex === 0 ? 0xffffff : 0x888888);
         this.confirmOptNo.setTint(this.confirmIndex === 1 ? 0xffffff : 0x888888);
     }
 
     setupConfirmInputs() {
-        // navega pelo teclado
         this.input.keyboard.on('keydown', (e) => {
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
                 this.confirmIndex = 0;
@@ -336,7 +314,6 @@ export class Start extends Phaser.Scene {
             }
         });
 
-        // navega pelo mouse
         this.confirmOptYes.setInteractive({ useHandCursor: true })
             .on('pointerover', () => { this.confirmIndex = 0; this.updateConfirmCursor(); })
             .on('pointerdown', () => { this.confirmIndex = 0; this.resolveConfirm(); });
@@ -358,17 +335,13 @@ export class Start extends Phaser.Scene {
         if (this.htmlNao) this.htmlNao.remove();
 
         if (this.confirmIndex === 0) {
-            // apaga save e inicia
             SaveManager.deleteSave();
             this.runIntroSequence();
         } else {
-            // cancela e volta ao menu
             this.isMenuReady = true;
             this.setupMenuInputs();
         }
     }
-
-    // cutscene inicial
 
     async runIntroSequence() {
         const { width, height } = this.scale;
@@ -378,20 +351,17 @@ export class Start extends Phaser.Scene {
         await new Promise(resolve => this.curtains.on('animationcomplete', resolve));
         this.curtains.setVisible(false);
 
-        // cena 1
         this.tweens.add({ targets: this.bgBright, alpha: 0, duration: 2000 });
         this.tweens.add({ targets: this.bgNormal, alpha: 1, duration: 2000 });
         await this.waitOrClick(5000);
         await this.playDialogue("texto");
         
-        // cena 2
         const closedBook = this.add.image(width + 100, height, 'scene1_frame1').setOrigin(1, 1).setScale(2).setAlpha(0);
         this.tweens.add({ targets: this.bgNormal, alpha: 0, duration: 1500 });
         this.tweens.add({ targets: closedBook, alpha: 1, duration: 1500 });
         await this.waitOrClick(2000);
         await this.playDialogue("\"texto\" texto\ntexto.");
 
-        // cena 3
         const imgZoom = this.add.image(width / 2, height / 2, 'livroZoom').setAlpha(0);
         const scale = Math.max(width / imgZoom.width, height / imgZoom.height);
         imgZoom.setScale(scale);
@@ -400,12 +370,10 @@ export class Start extends Phaser.Scene {
         await this.waitOrClick(1500);
         await this.playDialogue("texto\ntexto");
 
-        // limpa cena anterior
         if (closedBook) closedBook.destroy();
         if (this.bgNormal) this.bgNormal.destroy();
         if (this.bgBright) this.bgBright.destroy();
         
-        // inicia transicao com fogo
         this.startFireSequence(imgZoom);
     }
 
@@ -421,7 +389,6 @@ export class Start extends Phaser.Scene {
             if (level1.input?.keyboard) level1.input.keyboard.enabled = false;
             if (level1.input?.mouse) level1.input.mouse.enabled = false;
 
-            // audio do fogo
             if (this.musicIntro) {
                 this.tweens.add({ targets: this.musicIntro, volume: 0, duration: 2000, onComplete: () => this.musicIntro.stop() });
             }
@@ -429,7 +396,6 @@ export class Start extends Phaser.Scene {
             this.musicBurning.play();
             this.tweens.add({ targets: this.musicBurning, volume: 0.8, duration: 3000 });
 
-            // efeito visual de queima
             if (imgZoom) imgZoom.destroy(); 
             
             this.EffectManager = new EffectManager(this);
@@ -443,7 +409,6 @@ export class Start extends Phaser.Scene {
     startGame() {
         const level1 = this.scene.get('Level_1');
         
-        // finaliza som do fogo
         if (this.musicBurning) {
             this.tweens.add({
                 targets: this.musicBurning,
