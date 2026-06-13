@@ -34,13 +34,8 @@ export class RegisterScene extends Phaser.Scene {
     
         this.domErro = document.createElement('div');
         this.domErro.id = 'mensagem-erro';
-        this.domErro.style = 'opacity: 0.01; position: absolute; pointer-events: none;';
-        this.add.dom(10, 10, this.domErro);
-
-        this.domErro = document.createElement('div');
-        this.domErro.id = 'mensagem-erro';
-        this.domErro.style = 'position: absolute; left: -9999px;';
-        this.add.dom(10, 10, this.domErro);
+        this.domErro.style = 'opacity: 1; color: transparent; background: transparent; position: absolute; pointer-events: none; width: 250px; height: 30px; text-align: center; font-size: 16px; z-index: 9999;';
+        this.add.dom(width / 2, height / 2 - 63, this.domErro);
 
         this.createMenu();
     }
@@ -92,7 +87,7 @@ export class RegisterScene extends Phaser.Scene {
         this.addCenteredBitmapText(width / 2 + 42, height / 2 + 67, 'Voltar');
 
         this.userDigitado = ''; this.emailDigitado = ''; this.senhaDigitada = ''; this.confirmSenhaDigitada = '';
-        this.campoAtivo = ''; this.mostrarSenha = false; this.cursorVisible = true; this.tipoUsuario = 'jogador'; // default pra facilitar o teste
+        this.campoAtivo = ''; this.mostrarSenha = false; this.cursorVisible = true; this.tipoUsuario = 'jogador';
 
         this.time.addEvent({ delay: 500, loop: true, callback: () => { this.cursorVisible = !this.cursorVisible; this.atualizarExibicaoSenhas(); } });
         
