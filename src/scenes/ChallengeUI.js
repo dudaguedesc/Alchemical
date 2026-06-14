@@ -12,34 +12,62 @@ constructor()
 
 preload()
 {
-   this.load.image('menu_box', 'assets/ui/menu_box.png');
    this.load.image('confirm_box', 'assets/ui/confirm_box.png');
    this.load.bitmapFont('pixelFont', 'assets/fonts/pixelFont/pixelFont.png', 'assets/fonts/pixelFont/pixelFont.xml');
 }
 
 create(data)
 {
-
      const { width, height } = this.scale;
+     this.dialogue = new DialogueManager(this);
 
      //guardar a imagem do começo
      this.cenaOrigem = data.cenaOrigem;
 
+
+     this.createMenu();
+    }
+
+createMenu()
+{
+      const {width,height} = this.scale;
+      
+      //fundo transparente 
+      this.add.rectangle(width /2 ,height/2,width,height,0x000000,0.8);
+
+
+      //botão de retorno
+      const btnretornar = this.add.image(width/2 +110 , height/2 - 70 ,'confirm_box');
+      btnretornar.setDisplaySize(50,20);
+      btnretornar.setAlpha(0.8);
+      btnretornar.setInteractive();
+      //texto retornar
+      const texto =this.add.text(width/ 2 + 90,height/2 -74, 'Retornar', {fontSize:'20px', fontStyle : 'pixelFont'});
+      
+      //ação botão
+     
+      btnretornar.on('pointerdown', () => {
+        this.scene.stop();
+        this.cenaOrigem.scene.resume();
+
+      });
+      //
+     
+     
+
+
+      
+}
+
+}
+/*
      //fundo semi-transparente
      this.add.rectangle(width /2, height /2, width, height,0x000000, 0.8);
 
-     //janela do desafio
-     const janela = this.add.image(width / 2, height / 2, 'menu_box');
-     janela.setDisplaySize(500, 400);
-
      //titulo
-      this.add.text(width / 2, height / 2 - 150, 'Primeiro Desafio', {
-        fontSize: '36px',
-        fill: '#000000',
-         fontStyle:'pixelFont'
-        }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 - 150, 'Primeiro Desafio');
 
-   /*colocar o desafio ou conectar o que faz o desafio*/
+   colocar o desafio ou conectar o que faz o desafio
 
    //botão reiniciar
    const btnreiniciar = this.add.image(width / 2 - 130, height / 2 + 150,  'confirm_box');
@@ -69,7 +97,7 @@ create(data)
     /* this.scene.stop();     this.scene.launch('DesafioScene', { cenaOrigem: this.cenaOrigem });  
     
     // Aqui você pode resetar o estado do desafio
-    */});
+    });
     
     btnsair.on('pointerdown', () => {
     this.scene.stop(); // Fecha a cena do desafio
@@ -90,4 +118,4 @@ mostrarMensagem(texto)
         });
 
 }
-}
+}*/
