@@ -207,9 +207,12 @@ export class Level_1 extends Phaser.Scene {
         //inyeragir com npc
          if(this.npc &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y) < 20)
         {
-        this.dialogue.showDialogue("Olá viajante! Preparado para o desafio",null,null,() => {});
+        this.dialogue.showDialogue("Olá viajante! Preparado para o desafio",null,null,() => {
+        
          this.scene.pause();
          this.scene.launch('ChallangeUI',{cenaOrigem:this});
+        });
+
          return;
         }
 

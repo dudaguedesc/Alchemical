@@ -42,53 +42,44 @@ createMenu()
       btnretornar.setAlpha(0.8);
       btnretornar.setInteractive();
       //texto retornar
-      const texto =this.add.text(width/ 2 + 90,height/2 -74, 'Retornar', {fontSize:'20px', fontStyle : 'pixelFont'});
+      const textoRe =this.add.text(width/ 2 + 90,height/2 -74, 'Retornar', {fontSize:'20px', fontStyle : 'pixelFont'});
       
       //ação botão
-     
       btnretornar.on('pointerdown', () => {
         this.scene.stop();
-        this.cenaOrigem.scene.resume();
+        this.cenaOrigem.scene.resume();});
 
+    //botão de reiniciar
+      const btnreiniciar = this.add.image(width/2+10 , height/2 + 70 ,'confirm_box');
+      btnreiniciar.setDisplaySize(50,20);
+      btnreiniciar.setAlpha(0.8);
+      btnreiniciar.setInteractive();
+
+      //texto reiniciar
+      const textoRei =this.add.text(width/ 2 - 8,height/2 + 67, 'Reiniciar', {fontSize:'20px', fontStyle : 'pixelFont'});
+
+      btnreiniciar.on('pointerdown', () => {    
+        return this.scene.launch('DesafioScene', { cenaOrigem: this.cenaOrigem });
+        mensagemtexto("Reiniciou");
+        
       });
       //
      
      
 
+    }
 
+    mensagemtexto(texto){
+           this.mensagem.setText(texto);
+           this.time.delayedCall(1500, () => {
+            this.mensagem.setText('');
+        });
+    }
       
 }
 
-}
+
 /*
-     //fundo semi-transparente
-     this.add.rectangle(width /2, height /2, width, height,0x000000, 0.8);
-
-     //titulo
-      this.add.text(width / 2, height / 2 - 150, 'Primeiro Desafio');
-
-   colocar o desafio ou conectar o que faz o desafio
-
-   //botão reiniciar
-   const btnreiniciar = this.add.image(width / 2 - 130, height / 2 + 150,  'confirm_box');
-   btnreiniciar.setDisplaySize(160, 45);
-   btnreiniciar.setInteractive();
-   this.add.text(width / 2 - 130, height / 2 + 150, 'Reiniciar', {
-            fontSize: '20px',
-            fontStyle: 'pixelFont',
-            fill: '#ffd325'
-        }).setOrigin(0.5);
-
-   const btnsair  = this.add.image(width / 2 + 130, height / 2 + 150, 'confirm_box');
-    btnsair.setDisplaySize(160, 45);
-    btnsair.setInteractive();
-    this.add.text(width / 2 + 130, height / 2 + 150, 'Sair', {
-            fontSize: '20px',
-            fontStyle: 'pixelFOnt',
-            fill: '#ffd325'
-        }).setOrigin(0.5);
-
-
     //ações
 
     btnreiniciar.on('pointerdown', () => {
