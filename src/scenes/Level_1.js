@@ -87,9 +87,13 @@ export class Level_1 extends Phaser.Scene {
         this.npc.setDepth(5);
         this.physics.add.collider(this.npc, this.player);
 
-       //jarra que vou fazer o desafio
-        this.jarra = new GameObjects(this,150, 995,'jarra');
-        this.physics.add.collider(this.jarra, this.player);       
+       //jarra de decoração
+        this.jarra = new GameObjects(this, 110, 986,'jarra');
+        this.physics.add.collider(this.jarra, this.player);    
+        
+        //Segunda jarra de decoração
+        this.jarra2 = new GameObjects(this, 35 , 986,'jarra');
+        this.physics.add.collider(this.jarra2, this.player);
        
 
         // aviso de apertar e
@@ -210,6 +214,12 @@ export class Level_1 extends Phaser.Scene {
         }
 
         if(this.jarra &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.jarra.x, this.jarra.y) < 20)
+        {
+        this.dialogue.showDialogue("Uma jarra velha",null,null,() => {});
+         return;
+        }
+        
+        if(this.jarra2 &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.jarra2.x, this.jarra2.y) < 20)
         {
         this.dialogue.showDialogue("Uma jarra velha",null,null,() => {});
          return;
