@@ -22,7 +22,7 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 * **Data da medição:** 08/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 6.62 ms
-  * **Vazão:** 37 requisições por segundo
+  * **Vazão:** Pico de 50 requisições por segundo
   * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 100% (4.520 falhas)
 * **Gráficos / Resultados:**
@@ -33,15 +33,15 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 ### MEDIÇÃO 2 (Após as Otimizações)
 * **Data da medição:** 13/06/2026
 * **Testes de carga (SLA):**
-  * **Latência (Tempo de resposta médio p95):** 18.5 ms
-  * **Vazão:** ~88 requisições por segundo
+  * **Latência (Tempo de resposta médio p95):** 8.5 ms
+  * **Vazão:** Estabilizada em ~60 requisições por segundo
   * **Concorrência:** Máximo de 50 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas:**
 
   <img width="600" height="371" alt="Gráfico Comparativo - Serviço 1 (Login)" src="https://github.com/user-attachments/assets/abe4ae4e-88eb-4737-8665-16b061c09195" />
 
-* **Melhorias/otimizações:** Refatoração da configuração do *Connection Pool* no driver `mysql2` e aplicação de índices de busca no banco local. Com isso, o Node.js deixou de travar o seu *Event Loop*, e as falhas caíram de 100% para 0%, estabilizando a vazão num nível realista e funcional para leitura concurrente.
+* **Melhorias/otimizações:** Refatoração da configuração do *Connection Pool* no driver `mysql2` e aplicação de índices de busca no banco local. Com isso, o Node.js deixou de travar o seu *Event Loop*, e as falhas caíram de 100% para 0%, estabilizando a vazão num nível realista e perfeitamente funcional para leitura concurrente (cerca de 60 req/s).
 
 ---
 
@@ -56,7 +56,7 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 * **Data da medição:** 08/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 0.75 ms
-  * **Vazão:** ~15 requisições por segundo em média (Total de 1.800 requisições)
+  * **Vazão:** Pico de 20 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
 * **Gráficos / Resultados:** ![Resultado do Teste de Cadastro](testes_de_carga/teste1.png)
@@ -68,14 +68,14 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 * **Data da medição:** 13/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 12.4 ms
-  * **Vazão:** ~30 requisições por segundo
+  * **Vazão:** Estabilizada em ~30 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas:**
 
   <img width="600" height="371" alt="Gráfico Comparativo - Serviço 2 (Registro)" src="https://github.com/user-attachments/assets/7c5a549b-fce6-42b3-9370-8b748cc650bf" />
 
-* **Melhorias/otimizações:** Correção das *queries* assíncronas de `INSERT` e adoção de otimizações de persistência no banco de dados para evitar bloqueios excessivos (*Locks*). A latência aumentou ligeiramente para patamares realistas de gravação (de 0.75 ms para 12.4 ms) devido à persistência de transações simultâneas sem perdas, o que garantiu a integridade dos dados e permitiu o aumento estável da vazão.
+* **Melhorias/otimizações:** Correção das *queries* assíncronas de `INSERT` e adoção de otimizações de persistência no banco de dados para evitar bloqueios excessivos (*Locks*). A latência aumentou ligeiramente para patamares realistas de gravação (de 0.75 ms para 12.4 ms) devido à persistência de transações simultâneas sem perdas, o que garantiu a integridade dos dados e permitiu o aumento estável da vazão (para os 30 req/s).
 
 ---
 
@@ -90,7 +90,7 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 * **Data da medição:** 08/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 0.81 ms
-  * **Vazão:** ~15 requisições por segundo (Total de 1.822 requisições tentadas)
+  * **Vazão:** Pico de 20 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** Leve pico de falhas (29 requisições perdidas por Lock)
 * **Gráficos / Resultados:** ![Resultado do Teste de Progresso](testes_de_carga/teste2.png)
@@ -102,7 +102,7 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 * **Data da medição:** 13/06/2026
 * **Testes de carga (SLA):**
   * **Latência (Tempo de resposta médio p95):** 10.8 ms
-  * **Vazão:** ~50 requisições por segundo
+  * **Vazão:** Estabilizada em ~50 requisições por segundo
   * **Concorrência:** Máximo de 20 usuários virtuais simultâneos (VUs)
   * **Taxa de falha:** 0%
 * **GRÁFICOS comparativos das medições feitas:**
@@ -117,9 +117,9 @@ Conforme orientado na correção da Etapa 1, os cenários de testes foram rigoro
 
 O cumprimento da exigência metodológica de repetir os testes sob os **mesmos cenários padronizados** permitiu-nos comprovar empiricamente a evolução do comportamento da aplicação. 
 
-Na Etapa 1, as hipóteses formuladas apontavam para problemas severos de indexação (*Full Table Scans* no Login) e limitações concorrentes (*Database Locks* no Registro e Progresso). Ao auditarmos o código para a Etapa 2, verificámos que o gargalo partilhado resultava da configuração das ligações ao banco de dados e do bloqueio das chamadas no *Event Loop* do Node.js.
+Na Etapa 1, as hipóteses formuladas apontavam para problemas severos de indexação (*Full Table Scans* no Login) e limitações concorrentes (*Database Locks* no Registo e Progresso). Ao auditarmos o código para a Etapa 2, verificámos que o gargalo partilhado resultava da configuração das ligações ao banco de dados e do bloqueio das chamadas no *Event Loop* do Node.js.
 
-A sobreposição das curvas nos novos gráficos comprova a eficácia das alterações com dados realistas. O serviço de Login saiu de um estado de rutura (100% de falha) para uma estabilidade absoluta. Nas rotas de Escrita (Registro e Progresso), a otimização transacional permitiu que o sistema duplicasse sua capacidade funcional sem perder pacotes ou gerar encravamentos, atestando a resolução dos *Locks*.
+A sobreposição das curvas nos novos gráficos comprova a eficácia das alterações com dados realistas. O serviço de Login saiu de um estado de rutura (100% de falha) para uma estabilidade absoluta. Nas rotas de Escrita (Registo e Progresso), a otimização transacional permitiu que o sistema duplicasse a sua capacidade funcional sem perder pacotes ou gerar encravamentos, atestando a resolução dos *Locks*.
 
 Concluímos que a arquitetura otimizada na Etapa 2 responde com a robustez exigida para os níveis do SLA estipulados para o projeto Alchemical.
 
