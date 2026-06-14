@@ -29,8 +29,8 @@ const config = {
         }
     },
     scene: [
-        LoginScene,
-        RegisterScene,
+        //LoginScene,
+        //RegisterScene,
         Start,
         Level_1,
         PauseMenu

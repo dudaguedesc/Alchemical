@@ -2,6 +2,7 @@ import { DialogueManager } from "../managers/DialogueManager.js";
 import { Player } from "../entities/Player.js";
 import { AnimationManager } from "../managers/AnimationManager.js";
 import { SaveManager } from "../managers/SaveManager.js";
+//import { GameObjects } from "../entities/GameObjects.js";
 
 export class Level_1 extends Phaser.Scene {
     
@@ -16,6 +17,7 @@ export class Level_1 extends Phaser.Scene {
 
         // sprites
         this.load.spritesheet("young_niccolo", "assets/entities/young_niccolo.png", { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet("npc_fugitivo", "assets/entities/npc_fugitivo.png", {frameWidth: 32,frameHeight: 32});
 
         // audio
         this.load.audio("level1", "assets/audio/level1.wav");
@@ -27,6 +29,8 @@ export class Level_1 extends Phaser.Scene {
         
         // ui
         this.load.image("menu_box", "assets/ui/menu_box.png");
+        this.load.image("jarra", "assets/ui/jarra.png",{frameWidth: 20,frameHeight: 10})
+        
     }
 
     // cria elementos na tela
@@ -74,6 +78,12 @@ export class Level_1 extends Phaser.Scene {
         if (objects) {
             this.physics.add.collider(this.player, objects);
         }
+
+        this.npc = this.add.sprite(180, 998, "npc_fugitivo");
+        this.physics.add.existing(this.npc);
+        this.npc.body.setImmovable(true);
+        this.npc.setDepth(5);
+        this.physics.add.collider(this.npc, this.player);
 
         // aviso de apertar e
          this.interactPrompt = this.add.bitmapText(0, 0, "pixelFont", "[E] Interagir", 16)
@@ -143,6 +153,7 @@ export class Level_1 extends Phaser.Scene {
             txt.id = 'dialogo-removido'; // Some com o ID pro robô não achar mais
             txt.style.display = 'none';
         };
+        
     }
 
     // toca musica e texto inicial
@@ -183,6 +194,13 @@ export class Level_1 extends Phaser.Scene {
 
     // interage com mecanismos
     tryInteract() {
+        //inyeragir com npc
+         if(this.npc &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y) < 20)
+        {
+        this.dialogue.showDialogue("Olá viajante! Seja bem-vindo",null,null,() => {});
+        }
+        return;
+
         // abrir interface de desafios logicos
         this.interactCooldown = true;
         this.time.delayedCall(200, () => { this.interactCooldown = false; });
