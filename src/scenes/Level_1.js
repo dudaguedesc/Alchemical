@@ -2,7 +2,7 @@ import { DialogueManager } from "../managers/DialogueManager.js";
 import { Player } from "../entities/Player.js";
 import { AnimationManager } from "../managers/AnimationManager.js";
 import { SaveManager } from "../managers/SaveManager.js";
-//import { GameObjects } from "../entities/GameObjects.js";
+import { GameObjects } from "../entities/GameObjects.js";
 
 export class Level_1 extends Phaser.Scene {
     
@@ -29,7 +29,7 @@ export class Level_1 extends Phaser.Scene {
         
         // ui
         this.load.image("menu_box", "assets/ui/menu_box.png");
-        this.load.image("jarra", "assets/ui/jarra.png",{frameWidth: 20,frameHeight: 10})
+        this.load.image("jarra", "assets/ui/jarra.png",{frameWidth: 32,frameHeight: 32})
         
     }
 
@@ -78,12 +78,19 @@ export class Level_1 extends Phaser.Scene {
         if (objects) {
             this.physics.add.collider(this.player, objects);
         }
+    
 
+        //criando o npc no mapa
         this.npc = this.add.sprite(180, 998, "npc_fugitivo");
         this.physics.add.existing(this.npc);
         this.npc.body.setImmovable(true);
         this.npc.setDepth(5);
         this.physics.add.collider(this.npc, this.player);
+
+       //jarra que vou fazer o desafio
+        this.jarra = new GameObjects(this,150, 995,'jarra');
+        this.physics.add.collider(this.jarra, this.player);       
+       
 
         // aviso de apertar e
          this.interactPrompt = this.add.bitmapText(0, 0, "pixelFont", "[E] Interagir", 16)
@@ -182,8 +189,7 @@ export class Level_1 extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.keyE) && !this.interactCooldown) {
             this.tryInteract();
         }
-
-        this.updatePrompts();
+        this.updatePrompts();  
     }
 
     // mostra aviso de interacao
@@ -198,8 +204,15 @@ export class Level_1 extends Phaser.Scene {
          if(this.npc &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y) < 20)
         {
         this.dialogue.showDialogue("Olá viajante! Seja bem-vindo",null,null,() => {});
+         return;
         }
-        return;
+
+        if(this.jarra &&Phaser.Math.Distance.Between(this.player.x, this.player.y, this.jarra.x, this.jarra.y) < 20)
+        {
+        this.dialogue.showDialogue("Uma jarra velha",null,null,() => {});
+         return;
+        }
+         
 
         // abrir interface de desafios logicos
         this.interactCooldown = true;
