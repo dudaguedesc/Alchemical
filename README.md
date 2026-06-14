@@ -6,11 +6,6 @@
 
 ---
 
-## NOTA DE APERFEIÇOAMENTO DA METODOLOGIA (Padronização de Cenários)
-Conforme orientado na correção da Etapa 1, os cenários de testes foram rigorosamente padronizados. Utilizamos os exatos mesmos scripts do K6 e a mesma carga de usuários virtuais (VUs) da etapa anterior para reavaliar o sistema após as otimizações no código e na base de dados. Os gráficos abaixo sobrepõem os resultados antigos (V1) com os novos (V2) num único plano, para fins de comparação visual direta de cada métrica.
-
----
-
 ## Nome do Serviço 1: Autenticação de Usuário (Login)
 
 * **Tipo de operações:** Leitura (Consulta de validação na base de dados)
