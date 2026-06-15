@@ -44,7 +44,7 @@ createMenu()
       //texto retornar
       const textoRe =this.add.text(width/ 2 + 90,height/2 -74, 'Retornar', {fontSize:'20px', fontStyle : 'pixelFont'});
       
-      //ação botão
+      //ação do botão de retorno
       btnretornar.on('pointerdown', () => {
         this.scene.stop();
         this.cenaOrigem.scene.resume();});
@@ -57,7 +57,8 @@ createMenu()
 
       //texto reiniciar
       const textoRei =this.add.text(width/ 2 - 8,height/2 + 67, 'Reiniciar', {fontSize:'20px', fontStyle : 'pixelFont'});
-
+     
+      //ação do botão de reiniciar
       btnreiniciar.on('pointerdown', () => {
         this.mensagemtexto("Reiniciou");    
         this.time.delayedCall(1000,() => {
@@ -65,8 +66,22 @@ createMenu()
         });
         
       });
-      //
-     
+
+      //botão da dica
+      const btndica = this.add.image(width/2 - 55, height/2 + 70 ,'confirm_box');
+      btndica.setDisplaySize(50,20);
+      btndica.setAlpha(0.8);
+      btndica.setInteractive();
+
+      //texto de dica
+      const textodica =this.add.text(width/ 2 - 62 ,height/2 + 67, 'Dica', {fontSize:'20px', fontStyle : 'pixelFont'});
+
+      //ação do botão de dica
+      btndica.on('pointerdown', () => {
+        this.mensagemtexto("dica do desafio");
+    
+      });
+    
      
 
     }
@@ -85,10 +100,10 @@ createMenu()
          mensagem.setTint(0xffd700);
          
 
-           /*this.time.delayedCall(1000, () => {
+           this.time.delayedCall(1000, () => {
             mensagem.destroy();
             return;
-        });*/
+        });
     }
       
 }
