@@ -3,7 +3,7 @@ import { Level_1 } from './scenes/Level_1.js'; // Certifique-se do nome correto 
 import { PauseMenu } from './scenes/PauseMenu.js'; 
 import { LoginScene } from './scenes/LoginScene.js';
 import { RegisterScene } from './scenes/RegisterScene.js';
-import { ChallangeUI } from './scenes/ChallengeUI.js';
+import { ChallengeUI } from './scenes/ChallengeUI.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -34,7 +34,7 @@ const config = {
         //RegisterScene,
         Start,
         Level_1,
-        ChallangeUI,
+        ChallengeUI,
         PauseMenu
     ],
     scale: {

@@ -3,11 +3,11 @@ import { EffectManager } from '../managers/EffectManager.js';
 import { SaveManager } from '../managers/SaveManager.js';
 
 
-export class ChallangeUI extends Phaser.Scene
+export class ChallengeUI extends Phaser.Scene
 {
 constructor()
 {
-    super('ChallangeUI');
+    super('ChallengeUI');
 }
 
 preload()
@@ -58,9 +58,11 @@ createMenu()
       //texto reiniciar
       const textoRei =this.add.text(width/ 2 - 8,height/2 + 67, 'Reiniciar', {fontSize:'20px', fontStyle : 'pixelFont'});
 
-      btnreiniciar.on('pointerdown', () => {    
-        return this.scene.launch('DesafioScene', { cenaOrigem: this.cenaOrigem });
-        mensagemtexto("Reiniciou");
+      btnreiniciar.on('pointerdown', () => {
+        this.mensagemtexto("Reiniciou");    
+        this.time.delayedCall(1000,() => {
+           return this.scene.restart();
+        });
         
       });
       //
@@ -70,43 +72,23 @@ createMenu()
     }
 
     mensagemtexto(texto){
-           this.mensagem.setText(texto);
-           this.time.delayedCall(1500, () => {
-            this.mensagem.setText('');
-        });
+
+         const {width, height} = this.scale;
+
+        // const mensagem = this.add.text(width/2,height/2,texto,{fontSize:'20px' , fontStyle:'pixelFont'});
+         const mensagem = this.add.text(width/2, height/2, texto, {
+        fontSize: '20px',
+        fill: '#ffffff'
+    });
+         mensagem.setOrigin(0.5);
+         mensagem.setDepth(100);
+         mensagem.setTint(0xffd700);
+         
+
+           /*this.time.delayedCall(1000, () => {
+            mensagem.destroy();
+            return;
+        });*/
     }
       
 }
-
-
-/*
-    //ações
-
-    btnreiniciar.on('pointerdown', () => {
-    console.log("Reiniciando desafio...");
-    this.mostrarMensagem("Desafio reiniciado!");
-    /* this.scene.stop();     this.scene.launch('DesafioScene', { cenaOrigem: this.cenaOrigem });  
-    
-    // Aqui você pode resetar o estado do desafio
-    });
-    
-    btnsair.on('pointerdown', () => {
-    this.scene.stop(); // Fecha a cena do desafio
-    this.cenaOrigem.scene.resume(); // Volta a cena do jogo
-    });
-
-    this.mensagem = this.add.text(width / 2, height / 2 + 220, '', {
-            fontSize: '14px',
-            fill: '#00aa00'
-        }).setOrigin(0.5);
-
-    }
-mostrarMensagem(texto)
-{
-     this.mensagem.setText(texto);
-        this.time.delayedCall(1500, () => {
-            this.mensagem.setText('');
-        });
-
-}
-}*/

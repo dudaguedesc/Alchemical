@@ -210,7 +210,7 @@ export class Level_1 extends Phaser.Scene {
         this.dialogue.showDialogue("Olá viajante! Preparado para o desafio",null,null,() => {
         
          this.scene.pause();
-         this.scene.launch('ChallangeUI',{cenaOrigem:this});
+         this.scene.launch('ChallengeUI',{cenaOrigem:this});
         });
 
          return;
